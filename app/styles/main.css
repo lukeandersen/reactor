@@ -1,7 +1,9 @@
-@import 'normalize.css';
-
 :root {
 	--dark: #111;
+}
+
+* {
+	box-sizing: border-box;
 }
 
 html, body {
@@ -9,16 +11,28 @@ html, body {
 	height: 100%;
 	background: var(--dark);
 	font-family: helvetica, sans-seif;
+	font-size: 100%;
 }
 
 body {
     font-family: helvetica, sans-seif;
+	font-size: 16px;
+}
+
+.decks {
+	overflow: hidden;
+	& .player {
+		width: 50%;
+		float: left;
+	}
 }
 
 .player {
     background: #9eacad;
     padding: 5px;
     overflow: hidden;
+	font-size: 14px;
+	width: 100%;
 }
 
 .header {
@@ -41,8 +55,8 @@ body {
     height: 48px;
     background: orange;
     text-align: center;
-    line-height: 1.9;
-    font-size: 1.6em;
+    line-height: 1.75;
+    font-size: 2em;
     color: rgba(white, 0.75);
     font-weight: bold;
 }
@@ -141,7 +155,7 @@ input[type='range']::-webkit-slider-thumb {
     float: left;
     outline: 0;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 13px;
     &:hover {
         background: #333;
     }

@@ -1,5 +1,6 @@
 import React from 'react';
 import WaveSurfer from 'wavesurfer.js';
+import Normalize from 'normalize.css';
 import Styles from '../styles/main.css';
 import Player from '../components/player';
 // import Library from '../components/library';
@@ -46,7 +47,10 @@ var Home = React.createClass({
 		}
 		return (
 			<div>
-				<Player />
+				<div className="decks">
+					<Player name="A" />
+					<Player name="B" />
+				</div>
 				<table className="table">
 					<thead>
 						<tr>

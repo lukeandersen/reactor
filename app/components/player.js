@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react';
 
-const Player = () => {
-	return (
+const Player = ({name}) => {
+    return (
         <div className="player">
             <div className="header">
                 <div className="album"></div>
@@ -15,7 +15,7 @@ const Player = () => {
                         <p className="pitch-val">0</p>
                     </div>
                 </div>
-                <div className="deck">A</div>
+                <div className="deck">{name}</div>
             </div>
             <div className="body">
                 <div className="screen"></div>
