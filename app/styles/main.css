@@ -67,7 +67,7 @@ body {
 }
 
 h3 {
-    margin: 2px 0;
+    margin: 5px 0;
 }
 .title {
     float: left;
@@ -107,7 +107,7 @@ h3 {
 
 	/* TODO: Target first wavefrom better */
 	& > div > div > wave {
-        margin-top: 2em;
+        margin-top: 2.3rem;
     }
 }
 

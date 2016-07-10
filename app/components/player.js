@@ -52,7 +52,7 @@ var Player = React.createClass({
                             <p className="pitch-val">0</p>
                         </div>
                     </div>
-                    <div className="deck">{name}</div>
+                    <div className="deck">{this.props.name}</div>
                 </div>
                 <div className="body">
                     <div className="screen">

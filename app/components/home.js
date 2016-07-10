@@ -25,7 +25,7 @@ var Home = React.createClass({
 		//     waveColor: 'purple',
 		//     cursorColor: 'red'
 		// });
-		Api.getTracks('Drake').then((response) => {
+		Api.getTracks('mgmt').then((response) => {
 			// wavesurfer.load(response.data.tracks.items[0].preview_url);
 			this.setState({
 				tracks: response.data.tracks.items,
@@ -53,13 +53,22 @@ var Home = React.createClass({
 	handleStop() {
 		wavesurfer.stop();
 	},
+	handleSelectTrack(index) {
+		this.setState({
+			deckA: {
+				name: this.state.tracks[index].name,
+				artist: this.state.tracks[index].artists[0].name,
+				album: this.state.tracks[index].album.images[2].url,
+				preview_url: this.state.tracks[index].preview_url
+			}
+		});
+	},
 	render() {
 		function formatTime(ms) {
 			var min = (ms/1000/60) << 0,
 		    	sec = ((ms/1000) % 60).toFixed(0);
 			return min + ':' + sec;
 		}
-		// console.log('this.state', this.state);
 		return (
 			<div>
 				<div className="decks">
@@ -74,6 +83,7 @@ var Home = React.createClass({
 							<td>Artist</td>
 							<td>Popularity</td>
 							<td>Duration</td>
+							<td>Deck</td>
 						</tr>
 					</thead>
 					<tbody>
@@ -85,6 +95,7 @@ var Home = React.createClass({
 									<td>{track.artists[0].name}</td>
 									<td>{track.popularity}</td>
 									<td>{formatTime(track.duration_ms)}</td>
+									<td><button onClick={() => this.handleSelectTrack(key)}>A</button> <button onClick={() => this.handleSelectTrack(key)}>B</button></td>
 								</tr>
 							)
 						})}
