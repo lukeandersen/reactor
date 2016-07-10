@@ -1,5 +1,5 @@
 import React from 'react';
-import WaveSurfer from 'wavesurfer.js';
+// import WaveSurfer from 'wavesurfer.js';
 import Normalize from 'normalize.css';
 import Styles from '../styles/main.css';
 import Player from '../components/player';
@@ -9,7 +9,9 @@ import Api from '../helpers/api';
 var Home = React.createClass({
 	getInitialState() {
 		return {
-			tracks: []
+			tracks: [],
+			deckA: {},
+			deckB: {}
 		}
 	},
 	getTracks(artist) {
@@ -18,15 +20,27 @@ var Home = React.createClass({
 		});
 	},
 	componentDidMount() {
-		var wavesurfer = WaveSurfer.create({
-		    container: '.screen',
-		    waveColor: 'purple',
-		    cursorColor: 'red'
-		});
+		// var wavesurfer = WaveSurfer.create({
+		//     container: '.screen',
+		//     waveColor: 'purple',
+		//     cursorColor: 'red'
+		// });
 		Api.getTracks('Drake').then((response) => {
-			wavesurfer.load(response.data.tracks.items[0].preview_url);
+			// wavesurfer.load(response.data.tracks.items[0].preview_url);
 			this.setState({
-				tracks: response.data.tracks.items
+				tracks: response.data.tracks.items,
+				deckA: {
+					name: response.data.tracks.items[0].name,
+					artist: response.data.tracks.items[0].artists[0].name,
+					album: response.data.tracks.items[0].album.images[2].url,
+					preview_url: response.data.tracks.items[0].preview_url
+				},
+				deckB: {
+					name: response.data.tracks.items[3].name,
+					artist: response.data.tracks.items[3].artists[0].name,
+					album: response.data.tracks.items[3].album.images[2].url,
+					preview_url: response.data.tracks.items[3].preview_url
+				}
 			});
 		});
 	},
@@ -45,11 +59,12 @@ var Home = React.createClass({
 		    	sec = ((ms/1000) % 60).toFixed(0);
 			return min + ':' + sec;
 		}
+		// console.log('this.state', this.state);
 		return (
 			<div>
 				<div className="decks">
-					<Player name="A" />
-					<Player name="B" />
+					<Player name="A" track={this.state.deckA} />
+					<Player name="B" track={this.state.deckB} />
 				</div>
 				<table className="table">
 					<thead>

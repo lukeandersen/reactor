@@ -55,7 +55,7 @@ body {
     height: 48px;
     background: orange;
     text-align: center;
-    line-height: 1.75;
+    line-height: 1.8;
     font-size: 2em;
     color: rgba(white, 0.75);
     font-weight: bold;
@@ -105,7 +105,8 @@ h3 {
     overflow: hidden;
     flex: 2;
 
-    & > wave {
+	/* TODO: Target first wavefrom better */
+	& > div > div > wave {
         margin-top: 2em;
     }
 }
