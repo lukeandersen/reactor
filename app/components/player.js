@@ -6,7 +6,8 @@ var Player = React.createClass({
         return {
             playing: false,
             pos: 0,
-            duration: 0
+            duration: 0,
+            volume: 0.5
         };
     },
 	componentDidMount() {
@@ -17,16 +18,14 @@ var Player = React.createClass({
             playing: playState
         });
 	},
-	handleStop(e) {
-        console.log('stop');
-        // this.setState({
-        //     playing: false,
-        //     pos: 0
-        // });
-        e.wavesurfer.stop()
+	handleStop() {
+        this.setState({
+            playing: false,
+            pos: 0
+        });
 	},
     handleTempoChange() {
-        console.log('tempo changed', this.ref.tempo);
+        console.log('tempo changed', this.refs.tempo.value);
 	},
     handleHotCue() {
         let cues = [];
@@ -44,6 +43,11 @@ var Player = React.createClass({
         // TODO: Exit loop
         console.log('loop');
 	},
+    handleReady(e) {
+        this.setState({
+            duration: e.wavesurfer.getDuration().toFixed(2)
+        });
+    },
     handlePosChange(e) {
         let timeRemaining = function() {
             return (e.wavesurfer.getDuration() - e.wavesurfer.getCurrentTime()).toFixed(2);
@@ -51,11 +55,6 @@ var Player = React.createClass({
         this.setState({
             pos: e.originalArgs[0],
             duration: timeRemaining()
-        });
-    },
-    playerReady(e) {
-        this.setState({
-            duration: e.wavesurfer.getDuration().toFixed(2)
         });
     },
     render() {
@@ -86,7 +85,14 @@ var Player = React.createClass({
                 </div>
                 <div className="body">
                     <div className="screen">
-                        <Wavesurfer audioFile={this.props.track.preview_url} pos={this.state.pos} onPosChange={this.handlePosChange} onReady={this.playerReady} playing={this.state.playing} options={waveOptions} />
+                        <Wavesurfer
+                            volume={this.state.volume}
+                            audioFile={this.props.track.preview_url}
+                            pos={this.state.pos}
+                            onPosChange={this.handlePosChange}
+                            onReady={this.handleReady}
+                            playing={this.state.playing}
+                            options={waveOptions} />
                     </div>
                     <div className="tempo">
                         <input type="range" ref="tempo" onChange={this.handleTempoChange} min="0" max="2" step="0.01" className="pitch slider slider-vertical" />

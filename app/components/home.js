@@ -38,15 +38,16 @@ var Home = React.createClass({
 			});
 		});
 	},
-	handleSelectTrack(index) {
-		this.setState({
-			deckA: {
+	handleSelectTrack(index, deck) {
+		let update = {
+			['deck' + deck]: {
 				name: this.state.tracks[index].name,
 				artist: this.state.tracks[index].artists[0].name,
 				album: this.state.tracks[index].album.images[2].url,
 				preview_url: this.state.tracks[index].preview_url
 			}
-		});
+		}
+		this.setState(update);
 	},
 	render() {
 		function formatTime(ms) {
@@ -75,7 +76,7 @@ var Home = React.createClass({
 							<td>Artist</td>
 							<td>Popularity</td>
 							<td>Duration</td>
-							<td>Deck</td>
+							<td>Load</td>
 						</tr>
 					</thead>
 					<tbody>
@@ -87,7 +88,7 @@ var Home = React.createClass({
 									<td>{track.artists[0].name}</td>
 									<td>{track.popularity}</td>
 									<td>{formatTime(track.duration_ms)}</td>
-									<td><button onClick={() => this.handleSelectTrack(key)}>A</button> <button onClick={() => this.handleSelectTrack(key)}>B</button></td>
+									<td><button onClick={() => this.handleSelectTrack(key, 'A')}>A</button> <button onClick={() => this.handleSelectTrack(key, 'B')}>B</button></td>
 								</tr>
 							)
 						})}
