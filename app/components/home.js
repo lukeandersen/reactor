@@ -1,10 +1,10 @@
 import React from 'react';
-// import WaveSurfer from 'wavesurfer.js';
 import Normalize from 'normalize.css';
 import Styles from '../styles/main.css';
-import Player from '../components/player';
-// import Library from '../components/library';
 import Api from '../helpers/api';
+import Player from '../components/player';
+// import WaveSurfer from 'wavesurfer.js';
+// import Library from '../components/library';
 
 var Home = React.createClass({
 	getInitialState() {
@@ -20,13 +20,7 @@ var Home = React.createClass({
 		});
 	},
 	componentDidMount() {
-		// var wavesurfer = WaveSurfer.create({
-		//     container: '.screen',
-		//     waveColor: 'purple',
-		//     cursorColor: 'red'
-		// });
 		Api.getTracks('mgmt').then((response) => {
-			// wavesurfer.load(response.data.tracks.items[0].preview_url);
 			this.setState({
 				tracks: response.data.tracks.items,
 				deckA: {
@@ -43,15 +37,6 @@ var Home = React.createClass({
 				}
 			});
 		});
-	},
-	handlePlay() {
-		wavesurfer.play();
-	},
-	handlePause() {
-		wavesurfer.pause();
-	},
-	handleStop() {
-		wavesurfer.stop();
 	},
 	handleSelectTrack(index) {
 		this.setState({
@@ -73,7 +58,14 @@ var Home = React.createClass({
 			<div>
 				<div className="decks">
 					<Player name="A" track={this.state.deckA} />
+					<div className="mixer">
+						<input className="slider slider-vertical" type="range"/>
+						<input className="slider slider-vertical" type="range"/>
+					</div>
 					<Player name="B" track={this.state.deckB} />
+				</div>
+				<div className="fader">
+					<input className="slider" type="range"/>
 				</div>
 				<table className="table">
 					<thead>
