@@ -25,6 +25,7 @@ body {
 
 .mixer {
 	display: flex;
+	background: #222;
 	& .slider {
 		top: 50px;
 		left: 35px;
@@ -71,24 +72,31 @@ body {
     flex: 2;
 }
 
-h3 {
-    margin: 5px 0;
+.player-table {
+	border: 0;
+	width: 100%;
+	table-layout: fixed;
+	white-space: nowrap;
+	margin-top: 3px;
+	& td {
+		padding: 0.1em;
+		vertical-align: top;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
 }
+
 .title {
-    float: left;
+
 }
 
 .time {
-    float: right;
-    margin-right: 5px;
+    text-align: right;
 }
 
-.sub-title {
+.muted {
     opacity: .7;
-    & > p {
-        margin-top: 0;
-        margin-bottom: 0;
-    }
 }
 
 .artist {
@@ -96,8 +104,7 @@ h3 {
 }
 
 .pitch-val {
-    float: right;
-    margin-right: 5px;
+    text-align: right;
 }
 
 .body {
@@ -219,7 +226,7 @@ input[type='range']::-webkit-slider-thumb {
 
 .fader {
 	background: #222;
-	padding: 2em 0;
+	padding: 1.5em 0;
 	text-align: center;
 }
 
