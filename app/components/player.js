@@ -1,62 +1,80 @@
-import React, {PropTypes} from 'react';
-import Wavesurfer from 'react-wavesurfer';
+import React, {Component, PropTypes} from 'react';
+import WaveSurfer from 'wavesurfer.js';
 
-var Player = React.createClass({
-    getInitialState() {
-        return {
+class Player extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
             playing: false,
             pos: 0,
             duration: 0,
             volume: 0.5
         };
-    },
+
+        this.wavesurfer = Object.create(WaveSurfer);
+    }
+
 	componentDidMount() {
-	},
-	handleTogglePlay() {
-        let playState = (this.state.playing === false) ? true : false;
-        this.setState({
-            playing: playState
-        });
-	},
-	handleStop() {
-        this.setState({
-            playing: false,
-            pos: 0
-        });
-	},
-    handleTempoChange() {
-        console.log('tempo changed', this.refs.tempo.value);
-	},
-    handleHotCue() {
-        let cues = [];
-        // TODO: get current payback pos
-        // this.setState({
-        //     playing: true,
-        //     pos: cues[0]
-        // });
-        console.log('hot cue');
-	},
-    handleLoopIn() {
-        let loop = [];
-        // TODO: store loop in and out
-        // TODO: make playback loop in <-> out range
-        // TODO: Exit loop
-        console.log('loop');
-	},
-    handleReady(e) {
-        this.setState({
-            duration: e.wavesurfer.getDuration().toFixed(2)
-        });
-    },
-    handlePosChange(e) {
-        let timeRemaining = function() {
-            return (e.wavesurfer.getDuration() - e.wavesurfer.getCurrentTime()).toFixed(2);
+        let options = {
+            container: this.refs.wavesurfer,
+            waveColor: 'purple',
+            cursorColor: 'red'
         }
-        this.setState({
-            pos: e.originalArgs[0],
-            duration: timeRemaining()
-        });
-    },
+        this.wavesurfer.init(options);
+	}
+
+    componentWillReceiveProps(nextProps) {
+        if (this.props.track.preview_url !== nextProps.track.preview_url) {
+            this.wavesurfer.load(nextProps.track.preview_url);
+        }
+    }
+
+	// handleTogglePlay() {
+    //     let playState = (this.state.playing === false) ? true : false;
+    //     this.setState({
+    //         playing: playState
+    //     });
+	// },
+	// handleStop() {
+    //     this.setState({
+    //         playing: false,
+    //         pos: 0
+    //     });
+	// },
+    // handleTempoChange() {
+    //     console.log('tempo changed', this.refs.tempo.value);
+	// },
+    // handleHotCue() {
+    //     let cues = [];
+    //     // TODO: get current payback pos
+    //     // this.setState({
+    //     //     playing: true,
+    //     //     pos: cues[0]
+    //     // });
+    //     console.log('hot cue');
+	// },
+    // handleLoopIn() {
+    //     let loop = [];
+    //     // TODO: store loop in and out
+    //     // TODO: make playback loop in <-> out range
+    //     // TODO: Exit loop
+    //     console.log('loop');
+	// },
+    // handleReady(e) {
+    //     this.setState({
+    //         duration: e.wavesurfer.getDuration().toFixed(2)
+    //     });
+    // },
+    // handlePosChange(e) {
+    //     let timeRemaining = function() {
+    //         return (e.wavesurfer.getDuration() - e.wavesurfer.getCurrentTime()).toFixed(2);
+    //     }
+    //     this.setState({
+    //         pos: e.originalArgs[0],
+    //         duration: timeRemaining()
+    //     });
+    // },
     render() {
         const albumImg = {
             background: `url(${this.props.track.album})`
@@ -84,16 +102,7 @@ var Player = React.createClass({
                     <div className="deck">{this.props.name}</div>
                 </div>
                 <div className="body">
-                    <div className="screen">
-                        <Wavesurfer
-                            volume={this.state.volume}
-                            audioFile={this.props.track.preview_url}
-                            pos={this.state.pos}
-                            onPosChange={this.handlePosChange}
-                            onReady={this.handleReady}
-                            playing={this.state.playing}
-                            options={waveOptions} />
-                    </div>
+                    <div ref="wavesurfer" className="screen"></div>
                     <div className="tempo">
                         <input type="range" ref="tempo" onChange={this.handleTempoChange} min="0" max="2" step="0.01" className="pitch slider slider-vertical" />
                     </div>
@@ -122,6 +131,6 @@ var Player = React.createClass({
             </div>
     	);
     }
-});
+}
 
-module.exports = Player;
+export default Player;

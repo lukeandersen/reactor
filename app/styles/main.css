@@ -117,9 +117,8 @@ body {
     overflow: hidden;
     flex: 2;
 
-	/* TODO: Target first wavefrom better */
-	& > div > div > wave {
-        margin-top: 2.3rem;
+	& > wave {
+        margin-top: 2.2rem;
     }
 }
 
