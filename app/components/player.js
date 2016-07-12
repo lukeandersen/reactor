@@ -9,7 +9,8 @@ class Player extends Component {
         this.state = {
             playing: false,
             duration: 0,
-            tempo: 0
+            tempo: 0,
+            cues: []
         };
 
         this.wavesurfer = Object.create(WaveSurfer);
@@ -17,6 +18,7 @@ class Player extends Component {
         this.handleTogglePlay = this.handleTogglePlay.bind(this);
         this.handleStop = this.handleStop.bind(this);
         this.handleTempoChange = this.handleTempoChange.bind(this);
+        this.handleHotCue = this.handleHotCue.bind(this);
     }
 
 	componentDidMount() {
@@ -25,6 +27,7 @@ class Player extends Component {
             waveColor: 'purple',
             cursorColor: 'red'
         }
+
         this.wavesurfer.init(options);
 
         this.wavesurfer.on('ready', () => {
@@ -37,6 +40,10 @@ class Player extends Component {
     componentWillReceiveProps(nextProps) {
         if (this.props.track.preview_url !== nextProps.track.preview_url) {
             this.wavesurfer.load(nextProps.track.preview_url);
+            this.setState({
+                playing: false,
+                cues: []
+            });
         }
     }
 
@@ -48,6 +55,9 @@ class Player extends Component {
 	}
 
     handleStop() {
+        this.setState({
+            playing: false
+        });
         this.wavesurfer.stop();
 	}
 
@@ -58,15 +68,22 @@ class Player extends Component {
         this.wavesurfer.setPlaybackRate(this.refs.tempo.value);
 	}
 
-    // handleHotCue() {
-    //     let cues = [];
-    //     // TODO: get current payback pos
-    //     // this.setState({
-    //     //     playing: true,
-    //     //     pos: cues[0]
-    //     // });
-    //     console.log('hot cue');
-	// }
+    handleHotCue(index) {
+        let newCues = this.state.cues;
+
+        if(newCues[index]) {
+            this.setState({
+                playing: true
+            });
+            this.wavesurfer.play(newCues[index]);
+        } else {
+            newCues[index] = this.wavesurfer.getCurrentTime();
+            this.setState({
+                cues: newCues
+            });
+        }
+	}
+
     // handleLoopIn() {
     //     let loop = [];
     //     // TODO: store loop in and out
@@ -74,9 +91,14 @@ class Player extends Component {
     //     // TODO: Exit loop
     //     console.log('loop');
 	// }
+
     render() {
         let albumImg = { background: `url(${this.props.track.album})` },
-            playBtn = Classnames('btn btn-lg', {active: this.state.playing});
+            playBtn = Classnames('btn btn-lg', {active: this.state.playing}),
+            cueBtn1 = Classnames('btn', {active: this.state.cues[0]}),
+            cueBtn2 = Classnames('btn', {active: this.state.cues[1]}),
+            cueBtn3 = Classnames('btn', {active: this.state.cues[2]}),
+            cueBtn4 = Classnames('btn', {active: this.state.cues[3]});
         return (
             <div className="player">
                 <div className="header">
@@ -100,7 +122,7 @@ class Player extends Component {
                 <div className="body">
                     <div ref="wavesurfer" className="screen"></div>
                     <div className="tempo">
-                        <input type="range" ref="tempo" onChange={this.handleTempoChange} min="0" max="2" step="0.01" className="slider slider-vertical" />
+                        <input type="range" ref="tempo" onChange={this.handleTempoChange} min="0.8" max="1.2" step="0.01" className="slider slider-vertical" />
                     </div>
                 </div>
                 <div className="footer">
@@ -110,10 +132,10 @@ class Player extends Component {
                     </div>
 
                     <div className="hot-cue">
-                        <button className="btn" onClick={this.handleHotCue}>1</button>
-                        <button className="btn">2</button>
-                        <button className="btn">3</button>
-                        <button className="btn">4</button>
+                        <button className={cueBtn1} onClick={() => this.handleHotCue(0)}>1</button>
+                        <button className={cueBtn2} onClick={() => this.handleHotCue(1)}>2</button>
+                        <button className={cueBtn3} onClick={() => this.handleHotCue(2)}>3</button>
+                        <button className={cueBtn4} onClick={() => this.handleHotCue(3)}>4</button>
                     </div>
 
                     <div className="loop">
