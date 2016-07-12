@@ -20,7 +20,7 @@ var Home = React.createClass({
 		});
 	},
 	componentDidMount() {
-		Api.getTracks('divided by friday').then((response) => {
+		Api.getTracks('nelly').then((response) => {
 			this.setState({
 				tracks: response.data.tracks.items,
 				deckA: {
