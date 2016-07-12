@@ -29,10 +29,17 @@ class Player extends Component {
         }
 
         this.wavesurfer.init(options);
+        this.wavesurfer.setVolume(0.1);
 
         this.wavesurfer.on('ready', () => {
             this.setState({
                 duration: this.wavesurfer.getDuration().toFixed(2)
+            });
+        });
+
+        this.wavesurfer.on('audioprocess', () => {
+            this.setState({
+                duration: (this.wavesurfer.getDuration() - this.wavesurfer.getCurrentTime()).toFixed(2)
             });
         });
 	}
