@@ -87,26 +87,6 @@ body {
 	}
 }
 
-.title {
-
-}
-
-.time {
-    text-align: right;
-}
-
-.muted {
-    opacity: .7;
-}
-
-.artist {
-    float: left;
-}
-
-.pitch-val {
-    text-align: right;
-}
-
 .body {
     display: flex;
 }
@@ -174,7 +154,7 @@ input[type='range']::-webkit-slider-thumb {
     &:active {
         background: #555;
     }
-    & .active {
+    &.active {
         background: #98ea62;
         background: linear-gradient(#98ea62, #8fe36b);
         color: #111;
@@ -244,4 +224,14 @@ input[type='range']::-webkit-slider-thumb {
 	& thead td {
 		background: #333;
 	}
+}
+
+
+/* helpers */
+.text-right {
+    text-align: right;
+}
+
+.muted {
+    opacity: .7;
 }

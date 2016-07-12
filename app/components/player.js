@@ -1,11 +1,13 @@
 import React, {Component, PropTypes} from 'react';
 import WaveSurfer from 'wavesurfer.js';
+import Classnames from 'classnames';
 
 class Player extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
+            playing: false,
             duration: 0,
             tempo: 0
         };
@@ -39,17 +41,23 @@ class Player extends Component {
     }
 
 	handleTogglePlay() {
+        this.setState({
+            playing: this.state.playing === false ? true : false
+        });
         this.wavesurfer.playPause();
 	}
+
     handleStop() {
         this.wavesurfer.stop();
 	}
+
     handleTempoChange() {
         this.setState({
             tempo: this.refs.tempo.value
         });
         this.wavesurfer.setPlaybackRate(this.refs.tempo.value);
 	}
+
     // handleHotCue() {
     //     let cues = [];
     //     // TODO: get current payback pos
@@ -67,23 +75,24 @@ class Player extends Component {
     //     console.log('loop');
 	// }
     render() {
-        const albumImg = {
-            background: `url(${this.props.track.album})`
-        };
+        let albumImg = { background: `url(${this.props.track.album})` },
+            playBtn = Classnames('btn btn-lg', {active: this.state.playing});
         return (
             <div className="player">
                 <div className="header">
                     <div className="album" style={albumImg}></div>
                     <div className="header-body">
                         <table className="player-table">
-                            <tr>
-                                <td width="100%" className="title">{this.props.track.name}</td>
-                                <td width="90" className="time">-00.{this.state.duration}</td>
-                            </tr>
-                            <tr>
-                                <td className="artist muted">{this.props.track.artist}</td>
-                                <td className="pitch-val muted">{this.state.tempo}</td>
-                            </tr>
+                            <tbody>
+                                <tr>
+                                    <td width="100%">{this.props.track.name}</td>
+                                    <td width="90" className="text-right">-00.{this.state.duration}</td>
+                                </tr>
+                                <tr>
+                                    <td className="muted">{this.props.track.artist}</td>
+                                    <td className="muted" className="text-right">{this.state.tempo}</td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
                     <div className="deck">{this.props.name}</div>
@@ -91,13 +100,13 @@ class Player extends Component {
                 <div className="body">
                     <div ref="wavesurfer" className="screen"></div>
                     <div className="tempo">
-                        <input type="range" ref="tempo" onChange={this.handleTempoChange} min="0" max="2" step="0.01" className="pitch slider slider-vertical" />
+                        <input type="range" ref="tempo" onChange={this.handleTempoChange} min="0" max="2" step="0.01" className="slider slider-vertical" />
                     </div>
                 </div>
                 <div className="footer">
                     <div>
-                        <button className="play btn btn-lg" onClick={this.handleTogglePlay}>Play</button>
-                        <button className="stop btn btn-lg" onClick={this.handleStop}>Stop</button>
+                        <button className={playBtn} onClick={this.handleTogglePlay}>Play</button>
+                        <button className="btn btn-lg" onClick={this.handleStop}>Stop</button>
                     </div>
 
                     <div className="hot-cue">
