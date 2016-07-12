@@ -13,6 +13,10 @@ class Player extends Component {
         };
 
         this.wavesurfer = Object.create(WaveSurfer);
+
+        this.handleTogglePlay = this.handleTogglePlay.bind(this);
+        this.handleStop = this.handleStop.bind(this);
+        this.handleTempoChange = this.handleTempoChange.bind(this);
     }
 
 	componentDidMount() {
@@ -22,6 +26,12 @@ class Player extends Component {
             cursorColor: 'red'
         }
         this.wavesurfer.init(options);
+
+        this.wavesurfer.on('ready', () => {
+            this.setState({
+                duration: this.wavesurfer.getDuration().toFixed(2)
+            });
+        });
 	}
 
     componentWillReceiveProps(nextProps) {
@@ -30,21 +40,15 @@ class Player extends Component {
         }
     }
 
-	// handleTogglePlay() {
-    //     let playState = (this.state.playing === false) ? true : false;
-    //     this.setState({
-    //         playing: playState
-    //     });
-	// },
-	// handleStop() {
-    //     this.setState({
-    //         playing: false,
-    //         pos: 0
-    //     });
-	// },
-    // handleTempoChange() {
-    //     console.log('tempo changed', this.refs.tempo.value);
-	// },
+	handleTogglePlay() {
+        this.wavesurfer.playPause();
+	}
+    handleStop() {
+        this.wavesurfer.stop();
+	}
+    handleTempoChange() {
+        this.wavesurfer.setPlaybackRate(this.refs.tempo.value);
+	}
     // handleHotCue() {
     //     let cues = [];
     //     // TODO: get current payback pos
@@ -53,28 +57,14 @@ class Player extends Component {
     //     //     pos: cues[0]
     //     // });
     //     console.log('hot cue');
-	// },
+	// }
     // handleLoopIn() {
     //     let loop = [];
     //     // TODO: store loop in and out
     //     // TODO: make playback loop in <-> out range
     //     // TODO: Exit loop
     //     console.log('loop');
-	// },
-    // handleReady(e) {
-    //     this.setState({
-    //         duration: e.wavesurfer.getDuration().toFixed(2)
-    //     });
-    // },
-    // handlePosChange(e) {
-    //     let timeRemaining = function() {
-    //         return (e.wavesurfer.getDuration() - e.wavesurfer.getCurrentTime()).toFixed(2);
-    //     }
-    //     this.setState({
-    //         pos: e.originalArgs[0],
-    //         duration: timeRemaining()
-    //     });
-    // },
+	// }
     render() {
         const albumImg = {
             background: `url(${this.props.track.album})`
