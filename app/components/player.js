@@ -6,10 +6,8 @@ class Player extends Component {
         super(props);
 
         this.state = {
-            playing: false,
-            pos: 0,
             duration: 0,
-            volume: 0.5
+            tempo: 0
         };
 
         this.wavesurfer = Object.create(WaveSurfer);
@@ -47,6 +45,9 @@ class Player extends Component {
         this.wavesurfer.stop();
 	}
     handleTempoChange() {
+        this.setState({
+            tempo: this.refs.tempo.value
+        });
         this.wavesurfer.setPlaybackRate(this.refs.tempo.value);
 	}
     // handleHotCue() {
@@ -69,10 +70,6 @@ class Player extends Component {
         const albumImg = {
             background: `url(${this.props.track.album})`
         };
-        const waveOptions = {
-            waveColor: 'purple',
-            cursorColor: 'red'
-        };
         return (
             <div className="player">
                 <div className="header">
@@ -85,7 +82,7 @@ class Player extends Component {
                             </tr>
                             <tr>
                                 <td className="artist muted">{this.props.track.artist}</td>
-                                <td className="pitch-val muted">0</td>
+                                <td className="pitch-val muted">{this.state.tempo}</td>
                             </tr>
                         </table>
                     </div>
