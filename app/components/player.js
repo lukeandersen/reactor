@@ -10,7 +10,10 @@ class Player extends Component {
             playing: false,
             duration: 0,
             tempo: 0,
-            cues: []
+            cues: [],
+            loopActive: false,
+            loopIn: 0,
+            loopOut: 0
         };
 
         this.wavesurfer = Object.create(WaveSurfer);
@@ -19,6 +22,9 @@ class Player extends Component {
         this.handleStop = this.handleStop.bind(this);
         this.handleTempoChange = this.handleTempoChange.bind(this);
         this.handleHotCue = this.handleHotCue.bind(this);
+        this.handleLoopIn = this.handleLoopIn.bind(this);
+        this.handleLoopOut = this.handleLoopOut.bind(this);
+        this.handleLoopExit = this.handleLoopExit.bind(this);
     }
 
 	componentDidMount() {
@@ -40,6 +46,16 @@ class Player extends Component {
         this.wavesurfer.on('audioprocess', () => {
             this.setState({
                 duration: (this.wavesurfer.getDuration() - this.wavesurfer.getCurrentTime()).toFixed(2)
+            });
+
+            if(this.state.loopActive && this.state.loopOut && this.wavesurfer.getCurrentTime().toFixed(2) === this.state.loopOut) {
+                this.playLoop();
+	        }
+        });
+
+        this.wavesurfer.on('finish', () => {
+            this.setState({
+                playing: false
             });
         });
 	}
@@ -91,13 +107,37 @@ class Player extends Component {
         }
 	}
 
-    // handleLoopIn() {
-    //     let loop = [];
-    //     // TODO: store loop in and out
-    //     // TODO: make playback loop in <-> out range
-    //     // TODO: Exit loop
-    //     console.log('loop');
-	// }
+    handleLoopIn() {
+        this.setState({
+            loopIn: this.wavesurfer.getCurrentTime()
+        });
+	}
+
+    handleLoopOut() {
+        if(this.state.loopIn) {
+            this.setState({
+                loopOut: this.wavesurfer.getCurrentTime().toFixed(2),
+                loopActive: true
+            });
+        }
+        if(this.wavesurfer.isPlaying()) {
+            this.wavesurfer.stop();
+	    }
+        this.playLoop();
+	}
+
+    handleLoopExit() {
+        this.setState({
+            loopActive: false
+        });
+	}
+
+    playLoop() {
+        this.setState({
+            loopActive: true
+        });
+        this.wavesurfer.play(this.state.loopIn);
+    }
 
     render() {
         let albumImg = { background: `url(${this.props.track.album})` },
@@ -105,7 +145,8 @@ class Player extends Component {
             cueBtn1 = Classnames('btn', {active: this.state.cues[0]}),
             cueBtn2 = Classnames('btn', {active: this.state.cues[1]}),
             cueBtn3 = Classnames('btn', {active: this.state.cues[2]}),
-            cueBtn4 = Classnames('btn', {active: this.state.cues[3]});
+            cueBtn4 = Classnames('btn', {active: this.state.cues[3]}),
+            loop = Classnames('btn', {active: this.state.loopActive});
         return (
             <div className="player">
                 <div className="header">
@@ -147,9 +188,9 @@ class Player extends Component {
 
                     <div className="loop">
                         <div className="btn-group">
-                            <button className="loop-in btn" onClick={this.handleLoopIn}>In</button>
-                            <button className="loop-out btn" onClick={this.handleLoopOut}>Out</button>
-                            <button className="loop-exit btn" onClick={this.handleLoopExit}>Exit</button>
+                            <button className={loop} onClick={this.handleLoopIn}>In</button>
+                            <button className={loop} onClick={this.handleLoopOut}>Out</button>
+                            <button className="btn" onClick={this.handleLoopExit}>Exit</button>
                         </div>
                     </div>
                 </div>

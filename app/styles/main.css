@@ -156,7 +156,6 @@ input[type='range']::-webkit-slider-thumb {
     }
     &.active {
         background: #98ea62;
-        background: linear-gradient(#98ea62, #8fe36b);
         color: #111;
     }
     & .btn-lg {
@@ -175,7 +174,14 @@ input[type='range']::-webkit-slider-thumb {
         border-radius: 0;
         float: left;
         margin-left: 0;
+		&.active {
+  			animation: blink .5s linear infinite alternate;
+		}
     }
+}
+
+@keyframes blink {
+	to { background: #e3e3e3; }
 }
 
 .hot-cue {
