@@ -9,8 +9,9 @@ class Player extends Component {
         super(props);
 
         this.state = {
+            loading: false,
             playing: false,
-            duration: 0,
+            duration: '00:00',
             tempo: 0,
             cues: [],
             loopActive: false,
@@ -39,15 +40,22 @@ class Player extends Component {
         this.wavesurfer.init(options);
         // this.wavesurfer.setVolume(0.1);
 
+        this.wavesurfer.on('loading', (amount) => {
+            console.log('amount', amount);
+            this.setState({
+                loading: amount < 100 ? true : false
+            });
+        });
+
         this.wavesurfer.on('ready', () => {
             this.setState({
-                duration: this.wavesurfer.getDuration().toFixed(2)
+                duration: this.formatTime(this.wavesurfer.getDuration())
             });
         });
 
         this.wavesurfer.on('audioprocess', () => {
             this.setState({
-                duration: (this.wavesurfer.getDuration() - this.wavesurfer.getCurrentTime()).toFixed(2)
+                duration: this.formatTime(this.wavesurfer.getDuration() - this.wavesurfer.getCurrentTime())
             });
 
             if(this.state.loopActive && this.state.loopOut && this.wavesurfer.getCurrentTime().toFixed(2) === this.state.loopOut) {
@@ -62,6 +70,17 @@ class Player extends Component {
             });
         });
 	}
+
+    formatTime(t) {
+        let hours = Math.floor(t / 3600);
+        let minutes = Math.floor((t - (hours * 3600)) / 60);
+        let seconds = (t - (hours * 3600) - (minutes * 60)).toFixed(0);
+
+        // if (hours < 10) { hours = '0' + hours; }
+        if (minutes < 10) { minutes = '0' + minutes; }
+        if (seconds < 10) { seconds = '0' + seconds; }
+        return minutes + ':' + seconds;
+    }
 
     componentWillReceiveProps(nextProps) {
         if (this.props.track.preview_url !== nextProps.track.preview_url) {
@@ -83,7 +102,8 @@ class Player extends Component {
     handleStop() {
         this.setState({
             playing: false,
-            loopActive: false
+            loopActive: false,
+            duration: this.formatTime(this.wavesurfer.getDuration())
         });
         this.wavesurfer.stop();
 	}
@@ -131,9 +151,17 @@ class Player extends Component {
 	}
 
     handleLoopExit() {
-        this.setState({
-            loopActive: false
-        });
+        if(this.state.loopActive === true) {
+            this.setState({
+                loopActive: false
+            });
+        } else {
+            this.setState({
+                loopActive: true
+            });
+            this.wavesurfer.stop();
+            this.playLoop();
+        }
 	}
 
     playLoop() {
@@ -145,6 +173,7 @@ class Player extends Component {
 
     render() {
         let albumImg = { background: `url(${this.props.track.album})` },
+            loading = Classnames('screen', {loading: this.state.loading}),
             playBtn = Classnames('btn btn-lg', {active: this.state.playing}),
             cueBtn1 = Classnames('btn', {active: this.state.cues[0]}),
             cueBtn2 = Classnames('btn', {active: this.state.cues[1]}),
@@ -160,7 +189,7 @@ class Player extends Component {
                             <tbody>
                                 <tr>
                                     <td width="100%">{this.props.track.name}</td>
-                                    <td width="90" className="text-right">-00.{this.state.duration}</td>
+                                    <td width="90" className="text-right">-{this.state.duration}</td>
                                 </tr>
                                 <tr>
                                     <td className="muted">{this.props.track.artist}</td>
@@ -172,7 +201,7 @@ class Player extends Component {
                     <div className="deck">{this.props.name}</div>
                 </div>
                 <div className="body">
-                    <div ref="wavesurfer" className="screen"></div>
+                    <div ref="wavesurfer" className={loading}></div>
                     <div className="tempo">
                         <input type="range" ref="tempo" onChange={this.handleTempoChange} min="0.8" max="1.2" step="0.01" className="slider slider-vertical" />
                     </div>
