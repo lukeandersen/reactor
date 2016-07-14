@@ -23,11 +23,12 @@ class Player extends Component {
 
         this.handleTogglePlay = this.handleTogglePlay.bind(this);
         this.handleStop = this.handleStop.bind(this);
-        this.handleTempoChange = this.handleTempoChange.bind(this);
         this.handleHotCue = this.handleHotCue.bind(this);
         this.handleLoopIn = this.handleLoopIn.bind(this);
         this.handleLoopOut = this.handleLoopOut.bind(this);
         this.handleLoopExit = this.handleLoopExit.bind(this);
+        this.handleTempoChange = this.handleTempoChange.bind(this);
+        this.handleVolumeChange = this.handleVolumeChange.bind(this);
     }
 
 	componentDidMount() {
@@ -41,7 +42,6 @@ class Player extends Component {
         // this.wavesurfer.setVolume(0.1);
 
         this.wavesurfer.on('loading', (amount) => {
-            console.log('amount', amount);
             this.setState({
                 loading: amount < 100 ? true : false
             });
@@ -108,13 +108,6 @@ class Player extends Component {
         this.wavesurfer.stop();
 	}
 
-    handleTempoChange() {
-        this.setState({
-            tempo: this.refs.tempo.value
-        });
-        this.wavesurfer.setPlaybackRate(this.refs.tempo.value);
-	}
-
     handleHotCue(index) {
         let newCues = this.state.cues;
 
@@ -164,6 +157,20 @@ class Player extends Component {
         }
 	}
 
+    handleTempoChange() {
+        this.setState({
+            tempo: this.refs.tempo.value
+        });
+        this.wavesurfer.setPlaybackRate(this.refs.tempo.value);
+	}
+
+    handleVolumeChange() {
+        // this.setState({
+        //     volume: this.refs.volume.value
+        // });
+        this.wavesurfer.setVolume(this.refs.volume.value);
+	}
+
     playLoop() {
         this.setState({
             loopActive: true
@@ -181,51 +188,56 @@ class Player extends Component {
             cueBtn4 = Classnames('btn', {active: this.state.cues[3]}),
             loop = Classnames('btn', {active: this.state.loopActive});
         return (
-            <div className="player">
-                <div className="header">
-                    <div className="album" style={albumImg}></div>
-                    <div className="header-body">
-                        <table className="player-table">
-                            <tbody>
-                                <tr>
-                                    <td width="100%">{this.props.track.name}</td>
-                                    <td width="90" className="text-right">-{this.state.duration}</td>
-                                </tr>
-                                <tr>
-                                    <td className="muted">{this.props.track.artist}</td>
-                                    <td className="muted" className="text-right">{this.state.tempo}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+            <div className="player-with-controls">
+                <div className="player">
+                    <div className="header">
+                        <div className="album" style={albumImg}></div>
+                        <div className="header-body">
+                            <table className="player-table">
+                                <tbody>
+                                    <tr>
+                                        <td width="100%">{this.props.track.name}</td>
+                                        <td width="90" className="text-right">-{this.state.duration}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="muted">{this.props.track.artist}</td>
+                                        <td className="muted" className="text-right">{this.state.tempo}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div className="deck">{this.props.name}</div>
                     </div>
-                    <div className="deck">{this.props.name}</div>
-                </div>
-                <div className="body">
-                    <div ref="wavesurfer" className={loading}></div>
-                    <div className="tempo">
-                        <input type="range" ref="tempo" onChange={this.handleTempoChange} min="0.8" max="1.2" step="0.01" className="slider slider-vertical" />
-                    </div>
-                </div>
-                <div className="footer">
-                    <div>
-                        <button className={playBtn} onClick={this.handleTogglePlay}>Play</button>
-                        <button className="btn btn-lg" onClick={this.handleStop}>Stop</button>
-                    </div>
-
-                    <div className="hot-cue">
-                        <button className={cueBtn1} onClick={() => this.handleHotCue(0)}>1</button>
-                        <button className={cueBtn2} onClick={() => this.handleHotCue(1)}>2</button>
-                        <button className={cueBtn3} onClick={() => this.handleHotCue(2)}>3</button>
-                        <button className={cueBtn4} onClick={() => this.handleHotCue(3)}>4</button>
-                    </div>
-
-                    <div className="loop">
-                        <div className="btn-group">
-                            <button className={loop} onClick={this.handleLoopIn}>In</button>
-                            <button className={loop} onClick={this.handleLoopOut}>Out</button>
-                            <button className="btn" onClick={this.handleLoopExit}>Exit</button>
+                    <div className="body">
+                        <div ref="wavesurfer" className={loading}></div>
+                        <div className="tempo">
+                            <input type="range" ref="tempo" onChange={this.handleTempoChange} min="0.8" max="1.2" step="0.01" className="slider slider-vertical" />
                         </div>
                     </div>
+                    <div className="footer">
+                        <div>
+                            <button className={playBtn} onClick={this.handleTogglePlay}>Play</button>
+                            <button className="btn btn-lg" onClick={this.handleStop}>Stop</button>
+                        </div>
+
+                        <div className="hot-cue">
+                            <button className={cueBtn1} onClick={() => this.handleHotCue(0)}>1</button>
+                            <button className={cueBtn2} onClick={() => this.handleHotCue(1)}>2</button>
+                            <button className={cueBtn3} onClick={() => this.handleHotCue(2)}>3</button>
+                            <button className={cueBtn4} onClick={() => this.handleHotCue(3)}>4</button>
+                        </div>
+
+                        <div className="loop">
+                            <div className="btn-group">
+                                <button className={loop} onClick={this.handleLoopIn}>In</button>
+                                <button className={loop} onClick={this.handleLoopOut}>Out</button>
+                                <button className="btn" onClick={this.handleLoopExit}>Exit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="mixer">
+                    <input ref="volume" onChange={this.handleVolumeChange} className="slider slider-vertical" type="range" min="0" max="1" step="0.01"/>
                 </div>
             </div>
     	);

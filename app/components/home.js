@@ -23,7 +23,7 @@ class Home extends Component {
 	}
 
 	componentDidMount() {
-		Api.getTracks('edm').then((response) => {
+		Api.getTracks('dance').then((response) => {
 			this.setState({
 				tracks: response.data,
 				deckA: {
@@ -64,46 +64,44 @@ class Home extends Component {
 			<div>
 				<div className="decks">
 					<Player name="A" track={this.state.deckA} />
-					<div className="mixer">
-						<input className="slider slider-vertical" type="range"/>
-						<input className="slider slider-vertical" type="range"/>
-					</div>
 					<Player name="B" track={this.state.deckB} />
 				</div>
 				<div className="fader">
 					<input className="slider" type="range"/>
 				</div>
-				<table className="table">
-					<thead>
-						<tr>
-							<td>#</td>
-							<td>Album</td>
-							<td>Title</td>
-							<td>Artist</td>
-							<td>Popularity</td>
-							<td>Duration</td>
-							<td>Load</td>
-						</tr>
-					</thead>
-					<tbody>
-						{this.state.tracks.map((track, key) => {
-							let img = {
-								backgroundImage: `url(${track.artwork_url})`
-							};
-							return (
-								<tr key={key}>
-									<td>{key + 1}</td>
-									<td><div className="artwork-strip" style={img}></div></td>
-									<td>{track.title}</td>
-									<td>{track.user.username}</td>
-									<td>{track.likes_count}</td>
-									<td>{formatTime(track.duration)}</td>
-									<td><button onClick={() => this.handleSelectTrack(key, 'A')}>A</button> <button onClick={() => this.handleSelectTrack(key, 'B')}>B</button></td>
-								</tr>
-							)
-						})}
-					</tbody>
-		        </table>
+				<div className="table-wrapper">
+					<table className="table">
+						<thead>
+							<tr>
+								<td>#</td>
+								<td>Album</td>
+								<td>Title</td>
+								<td>Artist</td>
+								<td>Popularity</td>
+								<td>Duration</td>
+								<td>Load</td>
+							</tr>
+						</thead>
+						<tbody>
+							{this.state.tracks.map((track, key) => {
+								let img = {
+									backgroundImage: `url(${track.artwork_url})`
+								};
+								return (
+									<tr key={key}>
+										<td>{key + 1}</td>
+										<td><div className="artwork-strip" style={img}></div></td>
+										<td>{track.title}</td>
+										<td>{track.user.username}</td>
+										<td>{track.likes_count}</td>
+										<td>{formatTime(track.duration)}</td>
+										<td><button onClick={() => this.handleSelectTrack(key, 'A')}>A</button> <button onClick={() => this.handleSelectTrack(key, 'B')}>B</button></td>
+									</tr>
+								)
+							})}
+						</tbody>
+			        </table>
+				</div>
 			</div>
 		)
 	}
