@@ -44,11 +44,11 @@ body {
 
 .mixer {
 	background: #222;
-	width: 70px;
+	width: 81px;
 	& .slider {
 		width: 290px;
 		top: 55px;
-		left: -37px;
+		left: -30px;
     	position: relative;
 	}
 
