@@ -1,24 +1,27 @@
-import React from 'react';
+import React, {Component} from 'react';
 import Normalize from 'normalize.css';
 import Styles from '../styles/main.css';
 import Api from '../helpers/api';
 import Player from '../components/player';
-// import WaveSurfer from 'wavesurfer.js';
 // import Library from '../components/library';
 
-var Home = React.createClass({
-	getInitialState() {
-		return {
+class Home extends Component {
+	constructor(props) {
+		super(props);
+
+		this.state = {
 			tracks: [],
 			deckA: {},
 			deckB: {}
-		}
-	},
+		};
+	}
+
 	getTracks(artist) {
 		Api.getTracks(artist).then((response) => {
 			return response.data;
 		});
-	},
+	}
+
 	componentDidMount() {
 		Api.getTracks('nelly').then((response) => {
 			this.setState({
@@ -37,7 +40,8 @@ var Home = React.createClass({
 				}
 			});
 		});
-	},
+	}
+
 	handleSelectTrack(index, deck) {
 		let update = {
 			['deck' + deck]: {
@@ -48,7 +52,8 @@ var Home = React.createClass({
 			}
 		}
 		this.setState(update);
-	},
+	}
+
 	render() {
 		function formatTime(ms) {
 			var min = (ms/1000/60) << 0,
@@ -97,6 +102,6 @@ var Home = React.createClass({
 			</div>
 		)
 	}
-});
+}
 
-module.exports = Home;
+export default Home;
