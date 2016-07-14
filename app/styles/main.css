@@ -232,6 +232,12 @@ input[type='range']::-webkit-slider-thumb {
 	}
 }
 
+.artwork-strip {
+	width: 100%;
+	height: 15px;
+	background-position: center;
+}
+
 
 /* helpers */
 .text-right {

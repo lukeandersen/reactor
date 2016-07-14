@@ -1,9 +1,11 @@
 import React from 'react';
 import Axios from 'axios';
 
+const clientId = '9dd85b3d536b3da895a951ddac00d6f8';
+
 const Api = {
 	getTracks: (artist) => {
-		return Axios.get(`https://api.spotify.com/v1/search?q=${artist}&type=track`);
+		return Axios.get(`https://api.soundcloud.com/tracks?tags=${artist}&limit=200&client_id=${clientId}`);
 	}
 };
 

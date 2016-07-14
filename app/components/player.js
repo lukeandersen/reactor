@@ -2,6 +2,8 @@ import React, {Component, PropTypes} from 'react';
 import WaveSurfer from 'wavesurfer.js';
 import Classnames from 'classnames';
 
+const clientId = '9dd85b3d536b3da895a951ddac00d6f8';
+
 class Player extends Component {
     constructor(props) {
         super(props);
@@ -55,14 +57,15 @@ class Player extends Component {
 
         this.wavesurfer.on('finish', () => {
             this.setState({
-                playing: false
+                playing: false,
+                loopActive: false
             });
         });
 	}
 
     componentWillReceiveProps(nextProps) {
         if (this.props.track.preview_url !== nextProps.track.preview_url) {
-            this.wavesurfer.load(nextProps.track.preview_url);
+            this.wavesurfer.load(`${nextProps.track.preview_url}?client_id=${clientId}`);
             this.setState({
                 playing: false,
                 cues: []
@@ -79,7 +82,8 @@ class Player extends Component {
 
     handleStop() {
         this.setState({
-            playing: false
+            playing: false,
+            loopActive: false
         });
         this.wavesurfer.stop();
 	}

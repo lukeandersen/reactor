@@ -23,20 +23,20 @@ class Home extends Component {
 	}
 
 	componentDidMount() {
-		Api.getTracks('nelly').then((response) => {
+		Api.getTracks('edm').then((response) => {
 			this.setState({
-				tracks: response.data.tracks.items,
+				tracks: response.data,
 				deckA: {
-					name: response.data.tracks.items[0].name,
-					artist: response.data.tracks.items[0].artists[0].name,
-					album: response.data.tracks.items[0].album.images[2].url,
-					preview_url: response.data.tracks.items[0].preview_url
+					name: response.data[0].title,
+					artist: response.data[0].user.username,
+					album: response.data[0].artwork_url,
+					preview_url: response.data[0].stream_url
 				},
 				deckB: {
-					name: response.data.tracks.items[3].name,
-					artist: response.data.tracks.items[3].artists[0].name,
-					album: response.data.tracks.items[3].album.images[2].url,
-					preview_url: response.data.tracks.items[3].preview_url
+					name: response.data[1].title,
+					artist: response.data[1].user.username,
+					album: response.data[1].artwork_url,
+					preview_url: response.data[1].stream_url
 				}
 			});
 		});
@@ -45,10 +45,10 @@ class Home extends Component {
 	handleSelectTrack(index, deck) {
 		let update = {
 			['deck' + deck]: {
-				name: this.state.tracks[index].name,
-				artist: this.state.tracks[index].artists[0].name,
-				album: this.state.tracks[index].album.images[2].url,
-				preview_url: this.state.tracks[index].preview_url
+				name: this.state.tracks[index].title,
+				artist: this.state.tracks[index].user.username,
+				album: this.state.tracks[index].artwork_url,
+				preview_url: this.state.tracks[index].stream_url
 			}
 		}
 		this.setState(update);
@@ -77,6 +77,7 @@ class Home extends Component {
 					<thead>
 						<tr>
 							<td>#</td>
+							<td>Album</td>
 							<td>Title</td>
 							<td>Artist</td>
 							<td>Popularity</td>
@@ -86,13 +87,17 @@ class Home extends Component {
 					</thead>
 					<tbody>
 						{this.state.tracks.map((track, key) => {
+							let img = {
+								backgroundImage: `url(${track.artwork_url})`
+							};
 							return (
 								<tr key={key}>
 									<td>{key + 1}</td>
-									<td>{track.name}</td>
-									<td>{track.artists[0].name}</td>
-									<td>{track.popularity}</td>
-									<td>{formatTime(track.duration_ms)}</td>
+									<td><div className="artwork-strip" style={img}></div></td>
+									<td>{track.title}</td>
+									<td>{track.user.username}</td>
+									<td>{track.likes_count}</td>
+									<td>{formatTime(track.duration)}</td>
 									<td><button onClick={() => this.handleSelectTrack(key, 'A')}>A</button> <button onClick={() => this.handleSelectTrack(key, 'B')}>B</button></td>
 								</tr>
 							)
