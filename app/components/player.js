@@ -97,6 +97,7 @@ class Player extends Component {
             playing: this.state.playing === false ? true : false
         });
         this.wavesurfer.playPause();
+        console.log('this.wavesurfer.backend', this.wavesurfer.backend);
 	}
 
     handleStop() {

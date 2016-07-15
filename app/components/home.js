@@ -3,6 +3,7 @@ import Normalize from 'normalize.css';
 import Styles from '../styles/main.css';
 import Api from '../helpers/api';
 import Player from '../components/player';
+import LogoImg from '../assets/soundcloud-logo.png';
 // import Library from '../components/library';
 
 class Home extends Component {
@@ -68,6 +69,7 @@ class Home extends Component {
 				</div>
 				<div className="fader">
 					<input className="slider" type="range"/>
+					<img src={LogoImg} className="soundcloud" alt="soundcloud"/>
 				</div>
 				<div className="table-wrapper">
 					<table className="table">

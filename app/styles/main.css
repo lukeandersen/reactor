@@ -257,18 +257,27 @@ input[type='range']::-webkit-slider-thumb {
 	padding: 1.5em 0;
 	text-align: center;
 
-	& input[type='range']::-webkit-slider-thumb {
-	    appearance: none !important;
-	    background: linear-gradient(left,
-	    white 0%,
-	    white 44%,
-	    black 44%,
-	    black 54%,
-	    white  54%,
-	    white  100%);
-	    height:54px;
-	    width:30px;
+	& input[type='range'] {
+		margin-left: 104px;
+
+		&::-webkit-slider-thumb {
+		    appearance: none !important;
+		    background: linear-gradient(left,
+		    white 0%,
+		    white 44%,
+		    black 44%,
+		    black 54%,
+		    white  54%,
+		    white  100%);
+		    height:54px;
+		    width:30px;
+		}
 	}
+}
+
+.soundcloud {
+	float: right;
+	margin-top: -10px;
 }
 
 .table-wrapper {
