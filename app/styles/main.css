@@ -54,7 +54,7 @@ body {
 
 	& input[type='range']::-webkit-slider-thumb {
 	    appearance: none !important;
-	    background: linear-gradient(left,
+	    background: linear-gradient(to left,
 	    white 0%,
 	    white 44%,
 	    black 44%,
@@ -163,7 +163,7 @@ input[type='range'] {
 }
 input[type='range']::-webkit-slider-thumb {
     appearance: none !important;
-    background: linear-gradient(left,
+    background: linear-gradient(to left,
     rgba(101,101,101,1) 0%,
     rgba(101,101,101,1)44%,
     rgba(255,255,255,1) 44%,
@@ -262,7 +262,7 @@ input[type='range']::-webkit-slider-thumb {
 
 		&::-webkit-slider-thumb {
 		    appearance: none !important;
-		    background: linear-gradient(left,
+		    background: linear-gradient(to left,
 		    white 0%,
 		    white 44%,
 		    black 44%,
