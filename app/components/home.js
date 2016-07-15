@@ -4,7 +4,6 @@ import Styles from '../styles/main.css';
 import Api from '../helpers/api';
 import Player from '../components/player';
 import LogoImg from '../assets/soundcloud-logo.png';
-// import Library from '../components/library';
 
 class Home extends Component {
 	constructor(props) {
@@ -62,6 +61,7 @@ class Home extends Component {
 			return min + ':' + sec;
 		}
 		let {deckA, deckB, tracks} = this.state;
+
 		return (
 			<div>
 				<div className="decks">

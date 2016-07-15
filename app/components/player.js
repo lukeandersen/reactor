@@ -39,7 +39,6 @@ class Player extends Component {
         }
 
         this.wavesurfer.init(options);
-        // this.wavesurfer.setVolume(0.1);
 
         this.wavesurfer.on('loading', (amount) => {
             this.setState({
