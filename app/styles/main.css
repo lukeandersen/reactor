@@ -278,6 +278,8 @@ input[type='range']::-webkit-slider-thumb {
 .soundcloud {
 	float: right;
 	margin-top: -10px;
+	position: relative;
+	left: -10px;
 }
 
 .table-wrapper {

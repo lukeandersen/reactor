@@ -180,6 +180,7 @@ class Player extends Component {
     }
 
     render() {
+        // Styles
         let albumImg = { background: `url(${this.props.track.album})` },
             loading = Classnames('screen', {loading: this.state.loading}),
             playBtn = Classnames('btn btn-lg', {active: this.state.playing}),
@@ -188,6 +189,10 @@ class Player extends Component {
             cueBtn3 = Classnames('btn', {active: this.state.cues[2]}),
             cueBtn4 = Classnames('btn', {active: this.state.cues[3]}),
             loop = Classnames('btn', {active: this.state.loopActive});
+
+        let {duration, tempo} = this.state,
+            {track, name} = this.props;
+
         return (
             <div className="player-with-controls">
                 <div className="player">
@@ -197,17 +202,17 @@ class Player extends Component {
                             <table className="player-table">
                                 <tbody>
                                     <tr>
-                                        <td width="100%">{this.props.track.name}</td>
-                                        <td width="90" className="text-right">-{this.state.duration}</td>
+                                        <td width="100%">{track.name}</td>
+                                        <td width="90" className="text-right">-{duration}</td>
                                     </tr>
                                     <tr>
-                                        <td className="muted">{this.props.track.artist}</td>
-                                        <td className="muted" className="text-right">{this.state.tempo}</td>
+                                        <td className="muted">{track.artist}</td>
+                                        <td className="muted" className="text-right">{tempo}</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
-                        <div className="deck">{this.props.name}</div>
+                        <div className="deck">{name}</div>
                     </div>
                     <div className="body">
                         <div ref="wavesurfer" className={loading}></div>

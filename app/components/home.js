@@ -61,11 +61,12 @@ class Home extends Component {
 		    	sec = ((ms/1000) % 60).toFixed(0);
 			return min + ':' + sec;
 		}
+		let {deckA, deckB, tracks} = this.state;
 		return (
 			<div>
 				<div className="decks">
-					<Player name="A" track={this.state.deckA} />
-					<Player name="B" track={this.state.deckB} />
+					<Player name="A" track={deckA} />
+					<Player name="B" track={deckB} />
 				</div>
 				<div className="fader">
 					<input className="slider" type="range"/>
@@ -85,7 +86,7 @@ class Home extends Component {
 							</tr>
 						</thead>
 						<tbody>
-							{this.state.tracks.map((track, key) => {
+							{tracks.map((track, key) => {
 								let img = {
 									backgroundImage: `url(${track.artwork_url})`
 								};
