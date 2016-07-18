@@ -46,6 +46,7 @@ class Player extends Component {
 
         this.wavesurfer.on('ready', () => {
             this.setState({ duration: this.formatTime(this.wavesurfer.getDuration()) });
+            // this.wavesurfer.zoom(200);
         });
 
         this.wavesurfer.on('audioprocess', () => {
@@ -82,6 +83,13 @@ class Player extends Component {
                 playing: false,
                 cues: []
             });
+
+            // this.wavesurfer.initMinimap({
+            //     height: 30,
+            //     waveColor: '#ddd',
+            //     progressColor: '#999',
+            //     cursorColor: '#999'
+            // });
         }
     }
 
