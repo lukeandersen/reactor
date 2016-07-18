@@ -56,7 +56,7 @@ body {
 	    appearance: none !important;
 	    background: linear-gradient(to left, white 44%, black 44%, black 54%, white 54%);
 	    height:54px;
-	    width:30px;
+	    width:24px;
 	}
 }
 
@@ -142,6 +142,10 @@ body {
 .tempo {
     background: #333;
     width: 55px;
+	& input {
+		position: relative;
+		top: 5px;
+	}
 }
 
 .slider-vertical {
@@ -151,8 +155,8 @@ body {
 input[type='range'] {
     appearance: none !important;
     background:#000;
-    height: 10px;
-    width: 200px;
+    height: 2px;
+    width: 197px;
     outline: 0;
 }
 input[type='range']::-webkit-slider-thumb {
@@ -163,7 +167,7 @@ input[type='range']::-webkit-slider-thumb {
     rgba(255,255,255,1) 54%,
     rgba(101,101,101,1) 54%);
     height:54px;
-    width:30px;
+    width:24px;
 }
 
 .footer {
@@ -262,7 +266,7 @@ input[type='range']::-webkit-slider-thumb {
 		    appearance: none !important;
 		    background: linear-gradient(to left, white 44%, black 44%, black 54%, white 54%);
 		    height:54px;
-		    width:30px;
+		    width:24px;
 		}
 	}
 }
