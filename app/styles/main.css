@@ -54,13 +54,7 @@ body {
 
 	& input[type='range']::-webkit-slider-thumb {
 	    appearance: none !important;
-	    background: linear-gradient(to left,
-	    white 0%,
-	    white 44%,
-	    black 44%,
-	    black 54%,
-	    white  54%,
-	    white  100%);
+	    background: linear-gradient(to left, white 44%, black 44%, black 54%, white 54%);
 	    height:54px;
 	    width:30px;
 	}
@@ -164,12 +158,10 @@ input[type='range'] {
 input[type='range']::-webkit-slider-thumb {
     appearance: none !important;
     background: linear-gradient(to left,
-    rgba(101,101,101,1) 0%,
     rgba(101,101,101,1)44%,
     rgba(255,255,255,1) 44%,
     rgba(255,255,255,1) 54%,
-    rgba(101,101,101,1) 54%,
-    rgba(101,101,101,1) 100%);
+    rgba(101,101,101,1) 54%);
     height:54px;
     width:30px;
 }
@@ -254,32 +246,45 @@ input[type='range']::-webkit-slider-thumb {
 
 .fader {
 	background: #222;
-	padding: 1.5em 0;
-	text-align: center;
+	padding: 1.5em 5px;
+	display: flex;
+	align-items: center;
+
+	& .item {
+		width: 33.3334%;
+	}
 
 	& input[type='range'] {
-		margin-left: 104px;
+		margin: 0 auto;
+		display: block;
 
 		&::-webkit-slider-thumb {
 		    appearance: none !important;
-		    background: linear-gradient(to left,
-		    white 0%,
-		    white 44%,
-		    black 44%,
-		    black 54%,
-		    white  54%,
-		    white  100%);
+		    background: linear-gradient(to left, white 44%, black 44%, black 54%, white 54%);
 		    height:54px;
 		    width:30px;
 		}
 	}
 }
 
+.search {
+	& input {
+		background: none;
+		border: 2px solid #333;
+		border-radius: 2px;
+		padding: .5em;
+		color: white;
+	}
+	& button {
+		background: none;
+		color: white;
+		border: 0;
+	}
+}
+
 .soundcloud {
 	float: right;
 	margin-top: -10px;
-	position: relative;
-	left: -10px;
 }
 
 .table-wrapper {

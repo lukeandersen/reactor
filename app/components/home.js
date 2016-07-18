@@ -22,23 +22,18 @@ class Home extends Component {
 		});
 	}
 
+	handleSearch() {
+
+	}
+
 	componentDidMount() {
 		Api.getTracks('dance').then((response) => {
 			this.setState({
-				tracks: response.data,
-				deckA: {
-					name: response.data[0].title,
-					artist: response.data[0].user.username,
-					album: response.data[0].artwork_url,
-					preview_url: response.data[0].stream_url
-				},
-				deckB: {
-					name: response.data[1].title,
-					artist: response.data[1].user.username,
-					album: response.data[1].artwork_url,
-					preview_url: response.data[1].stream_url
-				}
+				tracks: response.data
 			});
+			// Load first two tracks
+			this.handleSelectTrack(0, 'A');
+			this.handleSelectTrack(1, 'B');
 		});
 	}
 
@@ -69,8 +64,18 @@ class Home extends Component {
 					<Player name="B" track={deckB} />
 				</div>
 				<div className="fader">
-					<input className="slider" type="range"/>
-					<img src={LogoImg} className="soundcloud" alt="soundcloud"/>
+					<div className="item">
+						<form className="search">
+							<input ref="search" type="search" placeholder="Seach soundcloud"/>
+							<button type="submit" onClick={this.search}>Search</button>
+						</form>
+					</div>
+					<div className="item">
+						<input className="slider" type="range"/>
+					</div>
+					<div className="item">
+						<img src={LogoImg} className="soundcloud" alt="soundcloud"/>
+					</div>
 				</div>
 				<div className="table-wrapper">
 					<table className="table">

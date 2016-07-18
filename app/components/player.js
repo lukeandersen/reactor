@@ -41,21 +41,15 @@ class Player extends Component {
         this.wavesurfer.init(options);
 
         this.wavesurfer.on('loading', (amount) => {
-            this.setState({
-                loading: amount < 100 ? true : false
-            });
+            this.setState({ loading: amount < 100 ? true : false });
         });
 
         this.wavesurfer.on('ready', () => {
-            this.setState({
-                duration: this.formatTime(this.wavesurfer.getDuration())
-            });
+            this.setState({ duration: this.formatTime(this.wavesurfer.getDuration()) });
         });
 
         this.wavesurfer.on('audioprocess', () => {
-            this.setState({
-                duration: this.formatTime(this.wavesurfer.getDuration() - this.wavesurfer.getCurrentTime())
-            });
+            this.setState({ duration: this.formatTime(this.wavesurfer.getDuration() - this.wavesurfer.getCurrentTime()) });
 
             if(this.state.loopActive && this.state.loopOut && this.wavesurfer.getCurrentTime().toFixed(2) === this.state.loopOut) {
                 this.playLoop();
@@ -92,11 +86,9 @@ class Player extends Component {
     }
 
 	handleTogglePlay() {
-        this.setState({
-            playing: this.state.playing === false ? true : false
-        });
+        this.setState({ playing: this.state.playing === false ? true : false });
         this.wavesurfer.playPause();
-        console.log('this.wavesurfer.backend', this.wavesurfer.backend);
+        // console.log('this.wavesurfer.backend', this.wavesurfer.backend);
 	}
 
     handleStop() {
@@ -112,22 +104,16 @@ class Player extends Component {
         let newCues = this.state.cues;
 
         if(newCues[index]) {
-            this.setState({
-                playing: true
-            });
+            this.setState({ playing: true });
             this.wavesurfer.play(newCues[index]);
         } else {
             newCues[index] = this.wavesurfer.getCurrentTime();
-            this.setState({
-                cues: newCues
-            });
+            this.setState({ cues: newCues });
         }
 	}
 
     handleLoopIn() {
-        this.setState({
-            loopIn: this.wavesurfer.getCurrentTime()
-        });
+        this.setState({ loopIn: this.wavesurfer.getCurrentTime() });
 	}
 
     handleLoopOut() {
@@ -145,22 +131,25 @@ class Player extends Component {
 
     handleLoopExit() {
         if(this.state.loopActive === true) {
-            this.setState({
-                loopActive: false
-            });
+            this.setState({ loopActive: false });
         } else {
-            this.setState({
-                loopActive: true
-            });
+            this.setState({ loopActive: true });
             this.wavesurfer.stop();
             this.playLoop();
         }
 	}
 
     handleTempoChange() {
-        this.setState({
-            tempo: this.refs.tempo.value
-        });
+        let formatTempo = function(val) {
+            if(val == 1) {
+                return 0;
+            } else if(val < 1) {
+                return '-' + val;
+            } else {
+                return '+' + val;
+            }
+        };
+        this.setState({ tempo: formatTempo(this.refs.tempo.value) });
         this.wavesurfer.setPlaybackRate(this.refs.tempo.value);
 	}
 
@@ -172,9 +161,7 @@ class Player extends Component {
 	}
 
     playLoop() {
-        this.setState({
-            loopActive: true
-        });
+        this.setState({ loopActive: true });
         this.wavesurfer.play(this.state.loopIn);
     }
 
