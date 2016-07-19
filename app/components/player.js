@@ -384,6 +384,7 @@ class Player extends Component {
 
     playLoop() {
         this.setState({ loopActive: true });
+        // this.wavesurfer.seekAndCenter(this.state.loopIn);
         this.wavesurfer.play(this.state.loopIn);
     }
 
