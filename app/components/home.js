@@ -14,16 +14,23 @@ class Home extends Component {
 			deckA: {},
 			deckB: {}
 		};
+
+		this.handleSearch = this.handleSearch.bind(this);
 	}
 
 	getTracks(artist) {
 		Api.getTracks(artist).then((response) => {
-			return response.data;
+			this.setState({
+				tracks: response.data
+			});
 		});
 	}
 
-	handleSearch() {
-
+	handleSearch(e) {
+		e.preventDefault();
+		if(this.refs.search.value !== null) {
+			this.getTracks(this.refs.search.value);
+		}
 	}
 
 	componentDidMount() {
@@ -65,9 +72,9 @@ class Home extends Component {
 				</div>
 				<div className="fader">
 					<div className="item">
-						<form className="search">
+						<form className="search" onSubmit={this.handleSearch}>
 							<input ref="search" type="search" placeholder="Seach soundcloud"/>
-							<button type="submit" onClick={this.search}>Search</button>
+							<button type="submit">Go</button>
 						</form>
 					</div>
 					<div className="item">
