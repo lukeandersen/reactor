@@ -73,8 +73,8 @@ class Home extends Component {
 				<div className="fader">
 					<div className="item">
 						<form className="search" onSubmit={this.handleSearch}>
-							<input ref="search" type="search" placeholder="Seach soundcloud"/>
-							<button type="submit">Go</button>
+							<input ref="search" type="search" placeholder="Seach"/>
+							<button type="submit">go</button>
 						</form>
 					</div>
 					<div className="item">
