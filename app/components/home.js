@@ -12,14 +12,15 @@ class Home extends Component {
 		this.state = {
 			tracks: [],
 			deckA: {},
-			deckB: {}
+			deckB: {},
+			ac: null
 		};
 
 		this.handleSearch = this.handleSearch.bind(this);
 	}
 
-	getTracks(artist) {
-		Api.getTracks(artist).then((response) => {
+	getTracks(search, tag) {
+		return Api.getTracks(search, tag).then((response) => {
 			this.setState({
 				tracks: response.data
 			});
@@ -34,10 +35,7 @@ class Home extends Component {
 	}
 
 	componentDidMount() {
-		Api.getTracks(null, 'dance').then((response) => {
-			this.setState({
-				tracks: response.data
-			});
+		this.getTracks(null, 'dance').then(() => {
 			// Load first two tracks
 			this.handleSelectTrack(0, 'A');
 			this.handleSelectTrack(1, 'B');
