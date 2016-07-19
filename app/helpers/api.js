@@ -4,8 +4,12 @@ import Axios from 'axios';
 const clientId = '9dd85b3d536b3da895a951ddac00d6f8';
 
 const Api = {
-	getTracks: (artist) => {
-		return Axios.get(`https://api.soundcloud.com/tracks?tags=${artist}&limit=200&client_id=${clientId}`);
+	getTracks: (query, tag) => {
+		if(tag) {
+			return Axios.get(`https://api.soundcloud.com/tracks?tags=${tag}&limit=100&client_id=${clientId}`);
+		} else {
+			return Axios.get(`https://api.soundcloud.com/tracks?q=${query}&limit=100&client_id=${clientId}`);
+		}
 	}
 };
 

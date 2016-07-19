@@ -34,7 +34,7 @@ class Home extends Component {
 	}
 
 	componentDidMount() {
-		Api.getTracks('dance').then((response) => {
+		Api.getTracks(null, 'dance').then((response) => {
 			this.setState({
 				tracks: response.data
 			});
