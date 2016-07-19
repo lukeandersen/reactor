@@ -308,6 +308,9 @@ input[type='range']::-webkit-slider-thumb {
 	& tbody tr:nth-of-type(odd) td {
 		background: #151515;
 	}
+	& tbody tr:hover td {
+		background: #222;
+	}
 	& thead td {
 		background: #333;
 	}
