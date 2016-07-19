@@ -309,6 +309,7 @@ class Player extends Component {
 
 	handleTogglePlay() {
         this.setState({ playing: this.state.playing === false ? true : false });
+        this.wavesurfer.setVolume(this.refs.volume.value);
         this.wavesurfer.playPause();
         // console.log('this.wavesurfer.backend', this.wavesurfer.backend);
 	}
@@ -390,7 +391,7 @@ class Player extends Component {
 
     render() {
         // Styles
-        let albumImg = { background: `url(${this.props.track.album})` },
+        let albumImg = { backgroundImage: this.props.track.album ? `url(${this.props.track.album})` : 'linear-gradient(to top, #555, #999)' },
             loading = Classnames('screen', {loading: this.state.loading}),
             playBtn = Classnames('btn btn-lg', {active: this.state.playing}),
             cueBtn1 = Classnames('btn', {active: this.state.cues[0]}),

@@ -100,7 +100,7 @@ class Home extends Component {
 						<tbody>
 							{tracks.map((track, key) => {
 								let img = {
-									backgroundImage: `url(${track.artwork_url})`
+									backgroundImage: track.artwork_url ? `url(${track.artwork_url})` : 'linear-gradient(to top, #555, #999)'
 								};
 								return (
 									<tr key={key}>
