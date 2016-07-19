@@ -3,7 +3,7 @@ import Normalize from 'normalize.css';
 import Styles from '../styles/main.css';
 import Api from '../helpers/api';
 import Player from '../components/player';
-import LogoImg from '../assets/soundcloud-logo.png';
+import LogoImg from '../assets/soundcloud-logo-1.png';
 
 class Home extends Component {
 	constructor(props) {
