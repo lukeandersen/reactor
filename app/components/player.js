@@ -266,7 +266,8 @@ class Player extends Component {
         this.wavesurfer.on('audioprocess', () => {
             this.setState({ duration: this.formatTime(this.wavesurfer.getDuration() - this.wavesurfer.getCurrentTime()) });
 
-            if(this.state.loopActive && this.state.loopOut && this.wavesurfer.getCurrentTime().toFixed(2) === this.state.loopOut) {
+            if(this.state.loopActive && this.state.loopOut && this.wavesurfer.getCurrentTime().toFixed(2) >= this.state.loopOut) {
+                // TODO: Make get of current time more precice
                 this.playLoop();
 	        }
         });
