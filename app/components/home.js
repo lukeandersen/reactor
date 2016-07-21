@@ -13,16 +13,19 @@ class Home extends Component {
 			tracks: [],
 			deckA: {},
 			deckB: {},
-			ac: null
+			ac: null,
+			loading: false
 		};
 
 		this.handleSearch = this.handleSearch.bind(this);
 	}
 
 	getTracks(search, tag) {
+		this.setState({ loading: true });
 		return Api.getTracks(search, tag).then((response) => {
 			this.setState({
-				tracks: response.data
+				tracks: response.data,
+				loading: false
 			});
 		});
 	}
@@ -60,7 +63,14 @@ class Home extends Component {
 		    	sec = ((ms/1000) % 60).toFixed(0);
 			return min + ':' + sec;
 		}
-		let {deckA, deckB, tracks} = this.state;
+		let {deckA, deckB, tracks, loading} = this.state;
+
+		var loadingText;
+		if (loading) {
+			loadingText = 'Loading...';
+		} else {
+			loadingText = null;
+		}
 
 		return (
 			<div>
@@ -73,6 +83,7 @@ class Home extends Component {
 						<form className="search" onSubmit={this.handleSearch}>
 							<input ref="search" type="search" placeholder="Seach"/>
 							<button type="submit">go</button>
+							<div className="searchStatus">{loadingText}</div>
 						</form>
 					</div>
 					<div className="item">

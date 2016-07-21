@@ -74,6 +74,7 @@ body {
     height: 48px;
     background: #555;
 	background: linear-gradient(to top, #555, #999);
+	background-size: cover;
 }
 
 .deck {
@@ -298,6 +299,11 @@ input[type='range']::-webkit-slider-thumb {
 		&:hover, &:focus {
 			background: #444;
 		}
+	}
+	& .searchStatus {
+		color: white;
+		display: inline-block;
+		margin-left: 1em;
 	}
 }
 
