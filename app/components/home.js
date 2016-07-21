@@ -87,7 +87,7 @@ class Home extends Component {
 						</form>
 					</div>
 					<div className="item">
-						<input className="slider" type="range"/>
+						<input className="slider" type="range" disabled title="Coming soon" />
 					</div>
 					<div className="item">
 						<img src={LogoImg} className="soundcloud" alt="soundcloud"/>
