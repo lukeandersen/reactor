@@ -244,6 +244,7 @@ class Player extends Component {
 
 	componentDidMount() {
         let options = {
+            audioContext: this.props.ac,
             container: this.refs.wavesurfer,
             waveColor: 'purple',
             progressColor: 'purple',
@@ -311,7 +312,7 @@ class Player extends Component {
         this.setState({ playing: this.state.playing === false ? true : false });
         this.wavesurfer.setVolume(this.refs.volume.value);
         this.wavesurfer.playPause();
-        // console.log('this.wavesurfer.backend', this.wavesurfer.backend);
+        console.log('this.wavesurfer.backend', this.wavesurfer.backend);
 	}
 
     handleStop() {

@@ -4,6 +4,9 @@ import Styles from '../styles/main.css';
 import Api from '../helpers/api';
 import Player from '../components/player';
 import LogoImg from '../assets/soundcloud-logo-1.png';
+import crossfader from 'crossfade';
+
+var audioCtx = new AudioContext();
 
 class Home extends Component {
 	constructor(props) {
@@ -12,11 +15,11 @@ class Home extends Component {
 		this.state = {
 			tracks: [],
 			deckA: {},
-			deckB: {},
-			ac: null
+			deckB: {}
 		};
 
 		this.handleSearch = this.handleSearch.bind(this);
+		this.handleCrossfader = this.handleCrossfader.bind(this);
 	}
 
 	getTracks(search, tag) {
@@ -40,6 +43,10 @@ class Home extends Component {
 			this.handleSelectTrack(0, 'A');
 			this.handleSelectTrack(1, 'B');
 		});
+
+		setTimeout(() => {
+			console.log('audioCtx', audioCtx);
+		}, 20000);
 	}
 
 	handleSelectTrack(index, deck) {
@@ -54,6 +61,12 @@ class Home extends Component {
 		this.setState(update);
 	}
 
+	handleCrossfader() {
+		var c = crossfader(this.audioCtx, node1, node2);
+		c.connect(context.destination);
+		c.fade.value = parseFloat(this.refs.xfader.value);
+	}
+
 	render() {
 		function formatTime(ms) {
 			var min = (ms/1000/60) << 0,
@@ -65,8 +78,8 @@ class Home extends Component {
 		return (
 			<div>
 				<div className="decks">
-					<Player name="A" track={deckA} />
-					<Player name="B" track={deckB} />
+					<Player name="A" track={deckA} ac={audioCtx} />
+					<Player name="B" track={deckB} ac={audioCtx} />
 				</div>
 				<div className="fader">
 					<div className="item">
@@ -76,7 +89,7 @@ class Home extends Component {
 						</form>
 					</div>
 					<div className="item">
-						<input className="slider" type="range"/>
+						<input className="slider" type="range" onChange={this.handleCrossfader} ref="xfader" min="-1" max="1" step="0.01"/>
 					</div>
 					<div className="item">
 						<img src={LogoImg} className="soundcloud" alt="soundcloud"/>
