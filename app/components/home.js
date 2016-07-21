@@ -97,13 +97,13 @@ class Home extends Component {
 					<table className="table">
 						<thead>
 							<tr>
-								<td width="20">#</td>
-								<td>Album</td>
+								<td width="40">#</td>
+								<td width="10%">Album</td>
 								<td>Title</td>
-								<td>Artist</td>
-								<td>Popularity</td>
-								<td>Duration</td>
-								<td>Load</td>
+								<td width="10%">Artist</td>
+								<td width="10%">Popularity</td>
+								<td width="10%">Duration</td>
+								<td width="10%">Load</td>
 							</tr>
 						</thead>
 						<tbody>
