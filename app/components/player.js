@@ -365,12 +365,11 @@ class Player extends Component {
 
     handleTempoChange() {
         let formatTempo = function(val) {
-            if(val == 1) {
-                return 0;
-            } else if(val < 1) {
-                return '-' + val;
+            if(val < 1) {
+                return '-' + ((1-val)*100).toFixed(1) + '%';
             } else {
-                return '+' + val;
+                val = '.' + val.split('.')[1];
+                return '+' + (val*100).toFixed(1) + '%';
             }
         };
         this.setState({ tempo: formatTempo(this.refs.tempo.value) });
@@ -428,7 +427,7 @@ class Player extends Component {
                     <div className="body">
                         <div ref="wavesurfer" className={loading}></div>
                         <div className="tempo">
-                            <input type="range" ref="tempo" onChange={this.handleTempoChange} min="0.9" max="1.1" step="0.005" className="slider slider-vertical" />
+                            <input type="range" ref="tempo" onChange={this.handleTempoChange} min="0.9" max="1.1" step="0.001" className="slider slider-vertical" />
                         </div>
                     </div>
                     <div className="footer">
