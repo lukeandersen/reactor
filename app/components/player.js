@@ -429,6 +429,10 @@ class Player extends Component {
                         <div ref="wavesurfer" className={loading}></div>
                         <div className="tempo">
                             <input type="range" ref="tempo" onChange={this.handleTempoChange} min="0.9" max="1.1" step="0.001" className="slider slider-vertical" />
+                            <div className="bend">
+                                <button>+</button>
+                                <button>-</button>
+                            </div>
                         </div>
                     </div>
                     <div className="footer">

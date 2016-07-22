@@ -145,9 +145,31 @@ body {
 .tempo {
     background: #333;
     width: 55px;
+	position: relative;
 	& input {
 		position: relative;
 		top: 4px;
+	}
+	&:hover {
+		& .bend {
+			display: block;
+		}
+	}
+}
+
+.bend {
+	display: none;
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	& button {
+		width:50%;
+		background: black;
+		color: white;
+		border: 0;
+		cursor: pointer;
+		outline: 0;
+		opacity: 0.5;
 	}
 }
 
@@ -274,6 +296,8 @@ input[type='range'] {
 	& input {
 		background: #333;
 		border: 0;
+		appearance: none;
+		-webkit-border-radius: 2px 0 0 2px;
 		border-radius: 2px 0 0 2px;
 		padding: .75em;
 		color: white;
