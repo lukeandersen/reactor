@@ -239,6 +239,8 @@ class Player extends Component {
         this.handleLoopOut = this.handleLoopOut.bind(this);
         this.handleLoopExit = this.handleLoopExit.bind(this);
         this.handleTempoChange = this.handleTempoChange.bind(this);
+        this.handleTempoBend = this.handleTempoBend.bind(this);
+        this.handleTempoBendStop = this.handleTempoBendStop.bind(this);
         this.handleVolumeChange = this.handleVolumeChange.bind(this);
     }
 
@@ -377,6 +379,29 @@ class Player extends Component {
         this.wavesurfer.setPlaybackRate(this.refs.tempo.value);
 	}
 
+    handleTempoBend(e) {
+        let max = 1.1,
+            min = 0.9,
+            currentTempo = this.refs.tempo.value;
+
+        if(e == 'up') {
+            this.bend = setInterval(() => {
+                currentTempo = Number(currentTempo) + 0.01;
+                this.wavesurfer.setPlaybackRate(currentTempo);
+            }, 100);
+        } else {
+            this.bend = setInterval(() => {
+                currentTempo = Number(currentTempo) - 0.01;
+                this.wavesurfer.setPlaybackRate(currentTempo);
+            }, 100);
+        }
+	}
+
+    handleTempoBendStop() {
+        clearInterval(this.bend);
+        this.wavesurfer.setPlaybackRate(this.refs.tempo.value);
+	}
+
     handleVolumeChange() {
         // this.setState({
         //     volume: this.refs.volume.value
@@ -430,8 +455,8 @@ class Player extends Component {
                         <div className="tempo">
                             <input type="range" ref="tempo" onChange={this.handleTempoChange} min="0.9" max="1.1" step="0.001" className="slider slider-vertical" />
                             <div className="bend">
-                                <button>+</button>
-                                <button>-</button>
+                                <button onMouseDown={() => this.handleTempoBend('up')} onMouseUp={this.handleTempoBendStop}>+</button>
+                                <button onMouseDown={() => this.handleTempoBend('down')} onMouseUp={this.handleTempoBendStop}>-</button>
                             </div>
                         </div>
                     </div>
