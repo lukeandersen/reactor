@@ -336,8 +336,8 @@ input[type='range'] {
 
 
 /* Tracks table */
-.table-wrapper {
-	height: calc(100vh - 372px);
+.table-scroll {
+	height: calc(100vh - 395px);
 	overflow-y: scroll;
 }
 

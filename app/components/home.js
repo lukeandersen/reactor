@@ -58,11 +58,13 @@ class Home extends Component {
 	}
 
 	render() {
+
 		function formatTime(ms) {
-			var min = (ms/1000/60) << 0,
-		    	sec = ((ms/1000) % 60).toFixed(0);
-			return min + ':' + sec;
-		}
+			let minutes = Math.floor(ms / 60000),
+				seconds = ((ms % 60000) / 1000).toFixed(0);
+			return minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
+	    }
+
 		let {deckA, deckB, tracks, loading} = this.state;
 
 		var loadingText;
@@ -93,19 +95,21 @@ class Home extends Component {
 						<img src={LogoImg} className="soundcloud" alt="soundcloud"/>
 					</div>
 				</div>
-				<div className="table-wrapper">
+				<table className="table">
+					<thead>
+						<tr>
+							<td width="40">#</td>
+							<td width="10%">Album</td>
+							<td>Title</td>
+							<td width="10%">Artist</td>
+							<td width="10%">Popularity</td>
+							<td width="10%">Duration</td>
+							<td width="10%">Load</td>
+						</tr>
+					</thead>
+				</table>
+				<div className="table-scroll">
 					<table className="table">
-						<thead>
-							<tr>
-								<td width="40">#</td>
-								<td width="10%">Album</td>
-								<td>Title</td>
-								<td width="10%">Artist</td>
-								<td width="10%">Popularity</td>
-								<td width="10%">Duration</td>
-								<td width="10%">Load</td>
-							</tr>
-						</thead>
 						<tbody>
 							{tracks.map((track, key) => {
 								let img = {
@@ -113,13 +117,13 @@ class Home extends Component {
 								};
 								return (
 									<tr key={key}>
-										<td>{key + 1}</td>
-										<td><div className="artwork-strip" style={img}></div></td>
+										<td width="40">{key + 1}</td>
+										<td width="10%"><div className="artwork-strip" style={img}></div></td>
 										<td>{track.title}</td>
-										<td>{track.user.username}</td>
-										<td>{track.likes_count}</td>
-										<td>{formatTime(track.duration)}</td>
-										<td><button onClick={() => this.handleSelectTrack(key, 'A')}>A</button> <button onClick={() => this.handleSelectTrack(key, 'B')}>B</button></td>
+										<td width="10%">{track.user.username}</td>
+										<td width="10%">{track.likes_count}</td>
+										<td width="10%">{formatTime(track.duration)}</td>
+										<td width="10%"><button onClick={() => this.handleSelectTrack(key, 'A')}>A</button> <button onClick={() => this.handleSelectTrack(key, 'B')}>B</button></td>
 									</tr>
 								)
 							})}
