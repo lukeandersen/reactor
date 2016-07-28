@@ -252,7 +252,8 @@ class Player extends Component {
             cursorColor: 'red',
             minimap: true,
             hideScrollbar: true,
-            minPxPerSec: 50
+            minPxPerSec: 50,
+            pixelRatio: 1
         }
 
         this.wavesurfer.init(options);
@@ -264,7 +265,6 @@ class Player extends Component {
         this.wavesurfer.on('ready', () => {
             this.setState({ duration: this.formatTime(this.wavesurfer.getDuration()) });
             this.wavesurfer.zoom(50);
-
         });
 
         this.wavesurfer.on('audioprocess', () => {
