@@ -1,6 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import WaveSurfer from 'wavesurfer.js';
 import Classnames from 'classnames';
+import Axios from 'axios';
 
 /* Minimap */
 WaveSurfer.Minimap = WaveSurfer.util.extend({}, WaveSurfer.Drawer, WaveSurfer.Drawer.Canvas, {
@@ -267,6 +268,10 @@ class Player extends Component {
             this.wavesurfer.zoom(50);
         });
 
+        this.wavesurfer.on('error', (error) => {
+            console.log('error', error);
+        });
+
         this.wavesurfer.on('audioprocess', () => {
             this.setState({ duration: this.formatTime(this.wavesurfer.getDuration() - this.wavesurfer.getCurrentTime()) });
 
@@ -297,7 +302,14 @@ class Player extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (this.props.track.preview_url !== nextProps.track.preview_url) {
-            this.wavesurfer.load(`${nextProps.track.preview_url}?client_id=${clientId}`);
+
+            // TODO: Check if Safari has fixed the 302 redirect, if so just load the track
+            Axios.get(`${nextProps.track.preview_url}?client_id=${clientId}&_status_code_map[302]=200`).then((track) => {
+                this.wavesurfer.load(track.data.location);
+            }).catch((error) => {
+                console.log('error', error);
+            });
+
             this.setState({
                 playing: false,
                 cues: []

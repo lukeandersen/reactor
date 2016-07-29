@@ -43,6 +43,11 @@ body {
 	width: 100%;
 }
 
+input[type=range]::-moz-range-track {
+	background: #000;
+	border-radius: 0;
+}
+
 .mixer {
 	background: #222;
 	width: 81px;
@@ -53,11 +58,23 @@ body {
     	position: relative;
 	}
 
-	& input[type='range']::-webkit-slider-thumb {
-	    appearance: none !important;
-	    background: linear-gradient(to left, white 44%, black 44%, black 54%, white 54%);
-	    height:54px;
-	    width:20px;
+	& input[type='range'] {
+		&::-webkit-slider-thumb {
+			appearance: none !important;
+			background: linear-gradient(to left, white 44%, black 44%, black 54%, white 54%);
+			border-radius: 0;
+			border: 0;
+			height:54px;
+			width:20px;
+		}
+		&::-moz-range-thumb {
+			appearance: none !important;
+			background: linear-gradient(to left, white 44%, black 44%, black 54%, white 54%);
+			border-radius: 0;
+			border: 0;
+			height:54px;
+			width:20px;
+		}
 	}
 }
 
@@ -187,9 +204,19 @@ input[type='range'] {
     width: 199px;
     outline: 0;
 	&::-webkit-slider-thumb {
-	    appearance: none !important;
-	    background: linear-gradient(to left, #656565 44%, white 44%, white 54%, #656565 54%);
-	    height:54px;
+		appearance: none !important;
+		background: linear-gradient(to left, #656565 44%, white 44%, white 54%, #656565 54%);
+		border-radius: 0;
+		border: 0;
+		height:54px;
+	    width:20px;
+	}
+	&::-moz-range-thumb {
+		appearance: none !important;
+		background: linear-gradient(to left, #656565 44%, white 44%, white 54%, #656565 54%);
+		border-radius: 0;
+		border: 0;
+		height:54px;
 	    width:20px;
 	}
 }
@@ -283,12 +310,21 @@ input[type='range'] {
 	& input[type='range'] {
 		margin: 0 auto;
 		display: block;
-
 		&::-webkit-slider-thumb {
-		    appearance: none !important;
-		    background: linear-gradient(to left, white 44%, black 44%, black 54%, white 54%);
-		    height:54px;
-		    width:20px;
+			appearance: none !important;
+			background: linear-gradient(to left, white 44%, black 44%, black 54%, white 54%);
+			border-radius: 0;
+			border: 0;
+			height:54px;
+			width:20px;
+		}
+		&::-moz-range-thumb {
+			appearance: none !important;
+			background: linear-gradient(to left, white 44%, black 44%, black 54%, white 54%);
+			border-radius: 0;
+			border: 0;
+			height:54px;
+			width:20px;
 		}
 	}
 }
@@ -404,4 +440,5 @@ input[type='range'] {
 
 input[disabled] {
 	cursor: not-allowed;
+	opacity: .5;
 }
