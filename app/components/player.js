@@ -1,6 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import WaveSurfer from 'wavesurfer.js';
 import Classnames from 'classnames';
+import Axios from 'axios';
 
 /* Minimap */
 WaveSurfer.Minimap = WaveSurfer.util.extend({}, WaveSurfer.Drawer, WaveSurfer.Drawer.Canvas, {
@@ -227,19 +228,27 @@ class Player extends Component {
             cues: [],
             loopActive: false,
             loopIn: 0,
-            loopOut: 0
+            loopOut: 0,
+            xfaderVol: 0.5
         };
 
         this.wavesurfer = Object.create(WaveSurfer);
 
         this.handleTogglePlay = this.handleTogglePlay.bind(this);
         this.handleStop = this.handleStop.bind(this);
+
         this.handleHotCue = this.handleHotCue.bind(this);
+
         this.handleLoopIn = this.handleLoopIn.bind(this);
         this.handleLoopOut = this.handleLoopOut.bind(this);
         this.handleLoopExit = this.handleLoopExit.bind(this);
+
         this.handleTempoChange = this.handleTempoChange.bind(this);
+        this.handleTempoBend = this.handleTempoBend.bind(this);
+        this.handleTempoBendStop = this.handleTempoBendStop.bind(this);
+
         this.handleVolumeChange = this.handleVolumeChange.bind(this);
+        this.calculateGain = this.calculateGain.bind(this);
     }
 
 	componentDidMount() {
@@ -250,7 +259,9 @@ class Player extends Component {
             progressColor: 'purple',
             cursorColor: 'red',
             minimap: true,
-            hideScrollbar: true
+            hideScrollbar: true,
+            minPxPerSec: 50,
+            pixelRatio: 1
         }
 
         this.wavesurfer.init(options);
@@ -261,13 +272,18 @@ class Player extends Component {
 
         this.wavesurfer.on('ready', () => {
             this.setState({ duration: this.formatTime(this.wavesurfer.getDuration()) });
-            this.wavesurfer.zoom(75);
+            this.wavesurfer.zoom(50);
+        });
+
+        this.wavesurfer.on('error', (error) => {
+            console.log('error', error);
         });
 
         this.wavesurfer.on('audioprocess', () => {
             this.setState({ duration: this.formatTime(this.wavesurfer.getDuration() - this.wavesurfer.getCurrentTime()) });
 
-            if(this.state.loopActive && this.state.loopOut && this.wavesurfer.getCurrentTime().toFixed(2) === this.state.loopOut) {
+            if(this.state.loopActive && this.state.loopOut && this.wavesurfer.getCurrentTime().toFixed(2) >= this.state.loopOut) {
+                // TODO: Make get of current time more precice
                 this.playLoop();
 	        }
         });
@@ -293,7 +309,14 @@ class Player extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (this.props.track.preview_url !== nextProps.track.preview_url) {
-            this.wavesurfer.load(`${nextProps.track.preview_url}?client_id=${clientId}`);
+
+            // TODO: Check if Safari has fixed the 302 redirect, if so just load the track
+            Axios.get(`${nextProps.track.preview_url}?client_id=${clientId}&_status_code_map[302]=200`).then((track) => {
+                this.wavesurfer.load(track.data.location);
+            }).catch((error) => {
+                console.log('error', error);
+            });
+
             this.setState({
                 playing: false,
                 cues: []
@@ -306,13 +329,21 @@ class Player extends Component {
                 cursorColor: 'black'
             });
         }
+
+        if(this.props.xfade !== nextProps.xfade) {
+            if(this.props.name === 'A' && nextProps.xfade > 0) {
+                this.wavesurfer.setVolume(this.calculateGain(nextProps.xfade));
+            }
+            if(this.props.name === 'B' && nextProps.xfade < 0) {
+                this.wavesurfer.setVolume(this.calculateGain(nextProps.xfade));
+            }
+        }
     }
 
 	handleTogglePlay() {
         this.setState({ playing: this.state.playing === false ? true : false });
         this.wavesurfer.setVolume(this.refs.volume.value);
         this.wavesurfer.playPause();
-        console.log('this.wavesurfer.backend', this.wavesurfer.backend);
 	}
 
     handleStop() {
@@ -365,24 +396,58 @@ class Player extends Component {
 
     handleTempoChange() {
         let formatTempo = function(val) {
-            if(val == 1) {
-                return 0;
-            } else if(val < 1) {
-                return '-' + val;
+            if(val < 1) {
+                return '-' + ((1-val)*100).toFixed(1) + '%';
             } else {
-                return '+' + val;
+                val = '.' + val.split('.')[1];
+                return '+' + (val*100).toFixed(1) + '%';
             }
         };
         this.setState({ tempo: formatTempo(this.refs.tempo.value) });
         this.wavesurfer.setPlaybackRate(this.refs.tempo.value);
 	}
 
-    handleVolumeChange() {
-        // this.setState({
-        //     volume: this.refs.volume.value
-        // });
-        this.wavesurfer.setVolume(this.refs.volume.value);
+    handleTempoBend(e) {
+        let max = 1.1,
+            min = 0.9,
+            currentTempo = this.refs.tempo.value;
+
+        if(e == 'up') {
+            this.bend = setInterval(() => {
+                currentTempo = Number(currentTempo) + 0.01;
+                this.wavesurfer.setPlaybackRate(currentTempo);
+            }, 100);
+        } else {
+            this.bend = setInterval(() => {
+                currentTempo = Number(currentTempo) - 0.01;
+                this.wavesurfer.setPlaybackRate(currentTempo);
+            }, 100);
+        }
 	}
+
+    handleTempoBendStop() {
+        clearInterval(this.bend);
+        this.wavesurfer.setPlaybackRate(this.refs.tempo.value);
+	}
+
+    handleVolumeChange() {
+        let newPlayerVol = this.refs.volume.value * this.state.xfaderVol;
+        this.wavesurfer.setVolume(Math.abs(newPlayerVol));
+	}
+
+    calculateGain(faderVal) {
+        /*  Get movement as a percentage (1 - 0.25 = 0.75 || 75%) &
+            always make sure its a positive value, then
+            return new volume value. 75% of 0.5 = 0.375 */
+
+        let currentVol = this.refs.volume.value,
+            move = 1 - Math.abs(faderVal),
+            newVol = move * currentVol;
+
+        this.setState({ xfaderVol: newVol });
+
+        return newVol;
+    }
 
     playLoop() {
         this.setState({ loopActive: true });
@@ -428,7 +493,11 @@ class Player extends Component {
                     <div className="body">
                         <div ref="wavesurfer" className={loading}></div>
                         <div className="tempo">
-                            <input type="range" ref="tempo" onChange={this.handleTempoChange} min="0.8" max="1.2" step="0.01" className="slider slider-vertical" />
+                            <input type="range" ref="tempo" onChange={this.handleTempoChange} min="0.9" max="1.1" step="0.001" className="slider slider-vertical" />
+                            <div className="bend">
+                                <button onMouseDown={() => this.handleTempoBend('up')} onMouseUp={this.handleTempoBendStop}>+</button>
+                                <button onMouseDown={() => this.handleTempoBend('down')} onMouseUp={this.handleTempoBendStop}>-</button>
+                            </div>
                         </div>
                     </div>
                     <div className="footer">

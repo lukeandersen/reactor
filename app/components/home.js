@@ -4,18 +4,17 @@ import Styles from '../styles/main.css';
 import Api from '../helpers/api';
 import Player from '../components/player';
 import LogoImg from '../assets/soundcloud-logo-1.png';
-import crossfader from 'crossfade';
-
-var audioCtx = new AudioContext();
 
 class Home extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
+			loading: false,
 			tracks: [],
 			deckA: {},
-			deckB: {}
+			deckB: {},
+			xfade: 0.5
 		};
 
 		this.handleSearch = this.handleSearch.bind(this);
@@ -23,9 +22,11 @@ class Home extends Component {
 	}
 
 	getTracks(search, tag) {
+		this.setState({ loading: true });
 		return Api.getTracks(search, tag).then((response) => {
 			this.setState({
-				tracks: response.data
+				tracks: response.data,
+				loading: false
 			});
 		});
 	}
@@ -43,10 +44,6 @@ class Home extends Component {
 			this.handleSelectTrack(0, 'A');
 			this.handleSelectTrack(1, 'B');
 		});
-
-		setTimeout(() => {
-			console.log('audioCtx', audioCtx);
-		}, 20000);
 	}
 
 	handleSelectTrack(index, deck) {
@@ -62,30 +59,39 @@ class Home extends Component {
 	}
 
 	handleCrossfader() {
-		var c = crossfader(this.audioCtx, node1, node2);
-		c.connect(context.destination);
-		c.fade.value = parseFloat(this.refs.xfader.value);
+		this.setState({
+			xfade: parseFloat(this.refs.xfader.value)
+		});
 	}
 
 	render() {
 		function formatTime(ms) {
-			var min = (ms/1000/60) << 0,
-		    	sec = ((ms/1000) % 60).toFixed(0);
-			return min + ':' + sec;
+			let minutes = Math.floor(ms / 60000),
+				seconds = ((ms % 60000) / 1000).toFixed(0);
+			return minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
+	    }
+
+		let {deckA, deckB, tracks, loading, ac} = this.state;
+
+		var loadingText;
+		if (loading) {
+			loadingText = 'Loading...';
+		} else {
+			loadingText = null;
 		}
-		let {deckA, deckB, tracks} = this.state;
 
 		return (
 			<div>
 				<div className="decks">
-					<Player name="A" track={deckA} ac={audioCtx} />
-					<Player name="B" track={deckB} ac={audioCtx} />
+					<Player name="A" track={deckA} xfade={this.state.xfade} />
+					<Player name="B" track={deckB} xfade={this.state.xfade} />
 				</div>
 				<div className="fader">
 					<div className="item">
 						<form className="search" onSubmit={this.handleSearch}>
 							<input ref="search" type="search" placeholder="Seach"/>
 							<button type="submit">go</button>
+							<div className="searchStatus">{loadingText}</div>
 						</form>
 					</div>
 					<div className="item">
@@ -95,19 +101,21 @@ class Home extends Component {
 						<img src={LogoImg} className="soundcloud" alt="soundcloud"/>
 					</div>
 				</div>
-				<div className="table-wrapper">
+				<table className="table">
+					<thead>
+						<tr>
+							<td width="40">#</td>
+							<td width="10%">Album</td>
+							<td>Title</td>
+							<td width="10%">Artist</td>
+							<td width="10%">Popularity</td>
+							<td width="10%">Duration</td>
+							<td width="10%">Load</td>
+						</tr>
+					</thead>
+				</table>
+				<div className="table-scroll">
 					<table className="table">
-						<thead>
-							<tr>
-								<td>#</td>
-								<td>Album</td>
-								<td>Title</td>
-								<td>Artist</td>
-								<td>Popularity</td>
-								<td>Duration</td>
-								<td>Load</td>
-							</tr>
-						</thead>
 						<tbody>
 							{tracks.map((track, key) => {
 								let img = {
@@ -115,13 +123,13 @@ class Home extends Component {
 								};
 								return (
 									<tr key={key}>
-										<td>{key + 1}</td>
-										<td><div className="artwork-strip" style={img}></div></td>
+										<td width="40">{key + 1}</td>
+										<td width="10%"><div className="artwork-strip" style={img}></div></td>
 										<td>{track.title}</td>
-										<td>{track.user.username}</td>
-										<td>{track.likes_count}</td>
-										<td>{formatTime(track.duration)}</td>
-										<td><button onClick={() => this.handleSelectTrack(key, 'A')}>A</button> <button onClick={() => this.handleSelectTrack(key, 'B')}>B</button></td>
+										<td width="10%">{track.user.username}</td>
+										<td width="10%">{track.likes_count}</td>
+										<td width="10%">{formatTime(track.duration)}</td>
+										<td width="10%"><button onClick={() => this.handleSelectTrack(key, 'A')}>A</button> <button onClick={() => this.handleSelectTrack(key, 'B')}>B</button></td>
 									</tr>
 								)
 							})}
