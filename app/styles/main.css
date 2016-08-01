@@ -231,13 +231,16 @@ input[type='range'] {
     background: #1c2723;
     color: white;
     border: 0;
-    padding: .75em 1.5em;
+    padding: .5em 1em;
     border-radius: 3px;
     margin: 0;
     float: left;
     outline: 0;
     cursor: pointer;
     font-size: 13px;
+	@media(min-width: 1250px) {
+		padding: .75em 1.5em;
+	}
     &:hover {
         background: #333;
     }
@@ -276,8 +279,11 @@ input[type='range'] {
 
 .hot-cue {
     display: none;
-    @media (min-width: 1240px) {
+    @media (min-width: 800px) {
         display: block;
+        margin-left: 5px;
+    }
+	@media (min-width: 1250px) {
         margin-left: 1em;
     }
     & .active {
@@ -375,6 +381,7 @@ input[type='range'] {
 .table-scroll {
 	height: calc(100vh - 395px);
 	overflow-y: scroll;
+	-webkit-overflow-scrolling: touch;
 }
 
 .table {
