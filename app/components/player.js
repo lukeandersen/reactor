@@ -229,7 +229,7 @@ class Player extends Component {
             loopActive: false,
             loopIn: 0,
             loopOut: 0,
-            xfaderVol: 0.5
+            maxVol: 1
         };
 
         this.wavesurfer = Object.create(WaveSurfer);
@@ -431,8 +431,8 @@ class Player extends Component {
 	}
 
     handleVolumeChange() {
-        let newPlayerVol = this.refs.volume.value * this.state.xfaderVol;
-        this.wavesurfer.setVolume(Math.abs(newPlayerVol));
+        let newPlayerVol = Math.abs(this.refs.volume.value * this.state.maxVol);
+        this.wavesurfer.setVolume(newPlayerVol);
 	}
 
     calculateGain(faderVal) {
@@ -444,7 +444,7 @@ class Player extends Component {
             move = 1 - Math.abs(faderVal),
             newVol = move * currentVol;
 
-        this.setState({ xfaderVol: newVol });
+        this.setState({ maxVol: move });
 
         return newVol;
     }

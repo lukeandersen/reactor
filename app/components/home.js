@@ -14,7 +14,7 @@ class Home extends Component {
 			tracks: [],
 			deckA: {},
 			deckB: {},
-			xfade: 0.5
+			xfade: 0
 		};
 
 		this.handleSearch = this.handleSearch.bind(this);
@@ -95,7 +95,7 @@ class Home extends Component {
 						</form>
 					</div>
 					<div className="item">
-						<input className="slider" type="range" onChange={this.handleCrossfader} ref="xfader" min="-1" max="1" step="0.01"/>
+						<input className="slider" type="range" onChange={this.handleCrossfader} ref="xfader" min="-1" max="1" step="0.02"/>
 					</div>
 					<div className="item">
 						<img src={LogoImg} className="soundcloud" alt="soundcloud"/>
