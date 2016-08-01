@@ -228,25 +228,32 @@ class Player extends Component {
             cues: [],
             loopActive: false,
             loopIn: 0,
-            loopOut: 0
+            loopOut: 0,
+            maxVol: 1
         };
 
         this.wavesurfer = Object.create(WaveSurfer);
 
         this.handleTogglePlay = this.handleTogglePlay.bind(this);
         this.handleStop = this.handleStop.bind(this);
+
         this.handleHotCue = this.handleHotCue.bind(this);
+
         this.handleLoopIn = this.handleLoopIn.bind(this);
         this.handleLoopOut = this.handleLoopOut.bind(this);
         this.handleLoopExit = this.handleLoopExit.bind(this);
+
         this.handleTempoChange = this.handleTempoChange.bind(this);
         this.handleTempoBend = this.handleTempoBend.bind(this);
         this.handleTempoBendStop = this.handleTempoBendStop.bind(this);
+
         this.handleVolumeChange = this.handleVolumeChange.bind(this);
+        this.calculateGain = this.calculateGain.bind(this);
     }
 
 	componentDidMount() {
         let options = {
+            audioContext: this.props.ac,
             container: this.refs.wavesurfer,
             waveColor: 'purple',
             progressColor: 'purple',
@@ -322,13 +329,21 @@ class Player extends Component {
                 cursorColor: 'black'
             });
         }
+
+        if(this.props.xfade !== nextProps.xfade) {
+            if(this.props.name === 'A' && nextProps.xfade > 0) {
+                this.wavesurfer.setVolume(this.calculateGain(nextProps.xfade));
+            }
+            if(this.props.name === 'B' && nextProps.xfade < 0) {
+                this.wavesurfer.setVolume(this.calculateGain(nextProps.xfade));
+            }
+        }
     }
 
 	handleTogglePlay() {
         this.setState({ playing: this.state.playing === false ? true : false });
         this.wavesurfer.setVolume(this.refs.volume.value);
         this.wavesurfer.playPause();
-        // console.log('this.wavesurfer.backend', this.wavesurfer.backend);
 	}
 
     handleStop() {
@@ -416,11 +431,23 @@ class Player extends Component {
 	}
 
     handleVolumeChange() {
-        // this.setState({
-        //     volume: this.refs.volume.value
-        // });
-        this.wavesurfer.setVolume(this.refs.volume.value);
+        let newPlayerVol = Math.abs(this.refs.volume.value * this.state.maxVol);
+        this.wavesurfer.setVolume(newPlayerVol);
 	}
+
+    calculateGain(faderVal) {
+        /*  Get movement as a percentage (1 - 0.25 = 0.75 || 75%) &
+            always make sure its a positive value, then
+            return new volume value. 75% of 0.5 = 0.375 */
+
+        let currentVol = this.refs.volume.value,
+            move = 1 - Math.abs(faderVal),
+            newVol = move * currentVol;
+
+        this.setState({ maxVol: move });
+
+        return newVol;
+    }
 
     playLoop() {
         this.setState({ loopActive: true });

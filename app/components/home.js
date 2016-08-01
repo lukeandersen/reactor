@@ -10,14 +10,15 @@ class Home extends Component {
 		super(props);
 
 		this.state = {
+			loading: false,
 			tracks: [],
 			deckA: {},
 			deckB: {},
-			ac: null,
-			loading: false
+			xfade: 0
 		};
 
 		this.handleSearch = this.handleSearch.bind(this);
+		this.handleCrossfader = this.handleCrossfader.bind(this);
 	}
 
 	getTracks(search, tag) {
@@ -57,15 +58,20 @@ class Home extends Component {
 		this.setState(update);
 	}
 
-	render() {
+	handleCrossfader() {
+		this.setState({
+			xfade: parseFloat(this.refs.xfader.value)
+		});
+	}
 
+	render() {
 		function formatTime(ms) {
 			let minutes = Math.floor(ms / 60000),
 				seconds = ((ms % 60000) / 1000).toFixed(0);
 			return minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
 	    }
 
-		let {deckA, deckB, tracks, loading} = this.state;
+		let {deckA, deckB, tracks, loading, ac} = this.state;
 
 		var loadingText;
 		if (loading) {
@@ -77,8 +83,8 @@ class Home extends Component {
 		return (
 			<div>
 				<div className="decks">
-					<Player name="A" track={deckA} />
-					<Player name="B" track={deckB} />
+					<Player name="A" track={deckA} xfade={this.state.xfade} />
+					<Player name="B" track={deckB} xfade={this.state.xfade} />
 				</div>
 				<div className="fader">
 					<div className="item">
@@ -89,7 +95,7 @@ class Home extends Component {
 						</form>
 					</div>
 					<div className="item">
-						<input className="slider" type="range" disabled title="Coming soon" />
+						<input className="slider" type="range" onChange={this.handleCrossfader} ref="xfader" min="-1" max="1" step="0.02"/>
 					</div>
 					<div className="item">
 						<img src={LogoImg} className="soundcloud" alt="soundcloud"/>
