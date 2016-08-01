@@ -12,6 +12,7 @@ html, body {
 	background: var(--dark);
 	font-family: helvetica, sans-seif;
 	font-size: 100%;
+	-webkit-tap-highlight-color: transparent;
 }
 
 body {
