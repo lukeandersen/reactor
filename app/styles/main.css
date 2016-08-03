@@ -55,7 +55,8 @@ input[type=range]::-moz-range-track {
 	& .slider {
 		width: 290px;
 		top: 55px;
-		left: -32px;
+		left: 50%;
+		margin-left: -145px;
     	position: relative;
 	}
 
