@@ -249,11 +249,12 @@ class Player extends Component {
 
         this.handleVolumeChange = this.handleVolumeChange.bind(this);
         this.calculateGain = this.calculateGain.bind(this);
+
+        this.handleFilterChange = this.handleFilterChange.bind(this);
     }
 
 	componentDidMount() {
         let options = {
-            audioContext: this.props.ac,
             container: this.refs.wavesurfer,
             waveColor: 'purple',
             progressColor: 'purple',
@@ -455,6 +456,14 @@ class Player extends Component {
         this.wavesurfer.play(this.state.loopIn);
     }
 
+    handleFilterChange() {
+        console.log('this.refs.filter.value', this.refs.filter.value);
+        this.lowpass = this.wavesurfer.backend.ac.createBiquadFilter();
+        this.wavesurfer.backend.setFilter(this.lowpass);
+        this.lowpass.type = "lowpass";
+        this.lowpass.frequency.value = this.refs.filter.value;
+    }
+
     render() {
         // Styles
         let albumImg = { backgroundImage: this.props.track.album ? `url(${this.props.track.album})` : 'linear-gradient(to top, #555, #999)' },
@@ -523,6 +532,7 @@ class Player extends Component {
                     </div>
                 </div>
                 <div className="mixer">
+                    <input ref="filter" onChange={this.handleFilterChange} className="effect" type="range" min="20" max="440" step="20"/>
                     <input ref="volume" onChange={this.handleVolumeChange} className="slider slider-vertical" type="range" min="0" max="1" step="0.01"/>
                 </div>
             </div>

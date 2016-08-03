@@ -52,11 +52,36 @@ input[type=range]::-moz-range-track {
 .mixer {
 	background: #222;
 	width: 81px;
+
 	& .slider {
-		width: 290px;
-		top: 55px;
-		left: -32px;
+		width: 200px;
+		top: 70px;
+		left: 13px;
     	position: relative;
+	}
+
+	& input[type='range'].effect {
+		width: 70px;
+		position: relative;
+		top: 20px;
+		left: 6px;
+
+		&::-webkit-slider-thumb {
+			appearance: none !important;
+			background: linear-gradient(to left, aqua 44%, black 44%, black 54%, aqua 54%);
+			border-radius: 0;
+			border: 0;
+			height:30px;
+			width:13px;
+		}
+		&::-moz-range-thumb {
+			appearance: none !important;
+			background: linear-gradient(to left, aqua 44%, black 44%, black 54%, aqua 54%);
+			border-radius: 0;
+			border: 0;
+			height:22px;
+			width:10px;
+		}
 	}
 
 	& input[type='range'] {
