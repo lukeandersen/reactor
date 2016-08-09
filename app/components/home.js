@@ -95,7 +95,11 @@ class Home extends Component {
 						</form>
 					</div>
 					<div className="item">
-						<input className="slider" type="range" onChange={this.handleCrossfader} ref="xfader" min="-1" max="1" step="0.02"/>
+						<div className="xfader">
+							<span>A</span>
+							<input className="slider" type="range" onChange={this.handleCrossfader} ref="xfader" min="-1" max="1" step="0.01"/>
+							<span>B</span>
+      					</div>
 					</div>
 					<div className="item">
 						<img src={LogoImg} className="soundcloud" alt="soundcloud"/>

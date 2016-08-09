@@ -82,7 +82,7 @@ input[type=range]::-moz-range-track {
 	}
 }
 .cue {
-	background: rgba(255, 255, 255, 0.75);
+	background: color(white alpha(75%));
 	border: 0;
 	padding: .4em;
 	cursor: pointer;
@@ -90,7 +90,7 @@ input[type=range]::-moz-range-track {
 	width: 100%;
 	outline: 0;
 	&:hover {
-		background: rgba(255, 255, 255, 0.9);
+		background: color(white alpha(90%));
 	}
 	&.active {
 		background: orange;
@@ -332,10 +332,17 @@ input[type='range'] {
 		width: 33.3334%;
 	}
 
-	& input[type='range'] {
+	& .xfader {
 		margin: 0 auto;
 		display: block;
-		&::-webkit-slider-thumb {
+		width: 240px;
+		& span {
+			color: color(white alpha(15%));
+			position: relative;
+			top: 3px;
+			padding: 0 5px;
+		}
+		& input::-webkit-slider-thumb {
 			appearance: none !important;
 			background: linear-gradient(to left, white 44%, black 44%, black 54%, white 54%);
 			border-radius: 0;
@@ -343,7 +350,7 @@ input[type='range'] {
 			height:54px;
 			width:20px;
 		}
-		&::-moz-range-thumb {
+		& input::-moz-range-thumb {
 			appearance: none !important;
 			background: linear-gradient(to left, white 44%, black 44%, black 54%, white 54%);
 			border-radius: 0;
