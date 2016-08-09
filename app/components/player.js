@@ -229,7 +229,8 @@ class Player extends Component {
             loopActive: false,
             loopIn: 0,
             loopOut: 0,
-            maxVol: 1
+            maxVol: 1,
+            cueActive: false
         };
 
         this.wavesurfer = Object.create(WaveSurfer);
@@ -249,6 +250,8 @@ class Player extends Component {
 
         this.handleVolumeChange = this.handleVolumeChange.bind(this);
         this.calculateGain = this.calculateGain.bind(this);
+
+        this.cueTrack = this.cueTrack.bind(this);
     }
 
 	componentDidMount() {
@@ -296,11 +299,23 @@ class Player extends Component {
         });
 	}
 
+    cueTrack() {
+        // TODO: Force audio to be mono per channel and create master/booth gain control
+        let active = this.state.cueActive ? false : true;
+        this.setState({ cueActive: active });
+        let panner = this.wavesurfer.backend.ac.createStereoPanner();
+        if(active) {
+            panner.pan.value = this.props.name === 'A' ? -1 : 1;
+            this.wavesurfer.backend.setFilter(panner);
+        } else {
+            this.wavesurfer.backend.disconnectFilters(panner);
+        }
+    }
+
     formatTime(t) {
         let hours = Math.floor(t / 3600);
         let minutes = Math.floor((t - (hours * 3600)) / 60);
         let seconds = (t - (hours * 3600) - (minutes * 60)).toFixed(0);
-
         // if (hours < 10) { hours = '0' + hours; }
         if (minutes < 10) { minutes = '0' + minutes; }
         if (seconds < 10) { seconds = '0' + seconds; }
@@ -464,7 +479,8 @@ class Player extends Component {
             cueBtn2 = Classnames('btn', {active: this.state.cues[1]}),
             cueBtn3 = Classnames('btn', {active: this.state.cues[2]}),
             cueBtn4 = Classnames('btn', {active: this.state.cues[3]}),
-            loop = Classnames('btn', {active: this.state.loopActive});
+            loop = Classnames('btn', {active: this.state.loopActive}),
+            cueAudio = Classnames('cue', {active: this.state.cueActive});
 
         let {duration, tempo} = this.state,
             {track, name} = this.props;
@@ -523,6 +539,7 @@ class Player extends Component {
                     </div>
                 </div>
                 <div className="mixer">
+                    <button className={cueAudio} onClick={this.cueTrack}>Cue</button>
                     <input ref="volume" onChange={this.handleVolumeChange} className="slider slider-vertical" type="range" min="0" max="1" step="0.01"/>
                 </div>
             </div>

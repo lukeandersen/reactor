@@ -52,11 +52,13 @@ input[type=range]::-moz-range-track {
 .mixer {
 	background: #222;
 	width: 81px;
+	padding: .5em;
+
 	& .slider {
-		width: 290px;
-		top: 55px;
+		width: 250px;
+		top: 40px;
 		left: 50%;
-		margin-left: -145px;
+		margin-left: -125px;
     	position: relative;
 	}
 
@@ -77,6 +79,21 @@ input[type=range]::-moz-range-track {
 			height:54px;
 			width:20px;
 		}
+	}
+}
+.cue {
+	background: rgba(255, 255, 255, 0.75);
+	border: 0;
+	padding: .4em;
+	cursor: pointer;
+	font-size: 13px;
+	width: 100%;
+	outline: 0;
+	&:hover {
+		background: rgba(255, 255, 255, 0.9);
+	}
+	&.active {
+		background: orange;
 	}
 }
 
