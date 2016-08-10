@@ -227,8 +227,8 @@ class Player extends Component {
             tempo: 0,
             cues: [],
             loopActive: false,
-            loopIn: 0,
-            loopOut: 0,
+            loopIn: false,
+            loopOut: false,
             maxVol: 1,
             cueActive: false
         };
@@ -387,27 +387,27 @@ class Player extends Component {
 	}
 
     handleLoopOut() {
-        if(this.state.loopIn) {
-            this.setState({
-                loopOut: this.wavesurfer.getCurrentTime().toFixed(2),
-                loopActive: true
-            });
-        }
-        if(this.wavesurfer.isPlaying()) {
-            this.wavesurfer.stop();
-	    }
-        this.playLoop();
-	}
-
-    handleLoopExit() {
-        if(this.state.loopActive === true) {
-            this.setState({ loopActive: false });
-        } else {
-            this.setState({ loopActive: true });
-            this.wavesurfer.stop();
+        if(this.state.loopIn && this.wavesurfer.isPlaying()) {
+            this.setState({ loopOut: this.wavesurfer.getCurrentTime().toFixed(2) });
             this.playLoop();
         }
 	}
+
+    handleLoopExit() {
+        if(!this.state.loopActive && this.wavesurfer.isPlaying()) {
+            this.setState({ loopActive: true });
+            this.wavesurfer.stop();
+            this.playLoop();
+        } else {
+            this.setState({ loopActive: false });
+        }
+	}
+
+    playLoop() {
+        this.setState({ loopActive: true });
+        // this.wavesurfer.seekAndCenter(this.state.loopIn);
+        this.wavesurfer.play(this.state.loopIn);
+    }
 
     handleTempoChange() {
         let formatTempo = function(val) {
@@ -462,12 +462,6 @@ class Player extends Component {
         this.setState({ maxVol: move });
 
         return newVol;
-    }
-
-    playLoop() {
-        this.setState({ loopActive: true });
-        // this.wavesurfer.seekAndCenter(this.state.loopIn);
-        this.wavesurfer.play(this.state.loopIn);
     }
 
     render() {
