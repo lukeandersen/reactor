@@ -334,13 +334,13 @@ input[type='range'] {
 	}
 
 	& .xfader {
-		margin: 0 auto;
-		display: block;
+		margin: 16px auto 0;
+		display: flex;
 		width: 240px;
 		& span {
 			color: color(white alpha(15%));
 			position: relative;
-			top: 3px;
+			top: -7px;
 			padding: 0 5px;
 		}
 		& input::-webkit-slider-thumb {
