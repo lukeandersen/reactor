@@ -17,9 +17,9 @@ const Library = (props) => {
 						<td width="10%">Album</td>
 						<td>Title</td>
 						<td width="10%">Artist</td>
-						<td width="10%">Popularity</td>
+						<td width="10%">Genre</td>
 						<td width="10%">Duration</td>
-						<td width="10%">Load</td>
+						<td width="10%">Play (Deck A/B)</td>
 					</tr>
 				</thead>
 			</table>
@@ -33,10 +33,10 @@ const Library = (props) => {
 							return (
 								<tr key={key}>
 									<td width="40">{key + 1}</td>
-									<td width="10%"><div className="artwork-strip" style={img}></div></td>
+									<td width="55"><div className="artwork-strip" style={img}></div></td>
 									<td>{track.title}</td>
 									<td width="10%">{track.user.username}</td>
-									<td width="10%">{track.likes_count}</td>
+									<td width="10%">{track.genre}</td>
 									<td width="10%">{formatTime(track.duration)}</td>
 									<td width="10%"><button onClick={() => props.selectTrack(key, 'A')}>A</button> <button onClick={() => props.selectTrack(key, 'B')}>B</button></td>
 								</tr>

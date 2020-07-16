@@ -1,218 +1,8 @@
 import React, {Component, PropTypes} from 'react';
 import WaveSurfer from 'wavesurfer.js';
+import MinimapPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.minimap.min.js';
 import Classnames from 'classnames';
 import Axios from 'axios';
-
-/* Minimap */
-WaveSurfer.Minimap = WaveSurfer.util.extend({}, WaveSurfer.Drawer, WaveSurfer.Drawer.Canvas, {
-    init: function (wavesurfer, params) {
-        this.wavesurfer = wavesurfer;
-        this.container = this.wavesurfer.drawer.container;
-        this.lastPos = this.wavesurfer.drawer.lastPos;
-        this.params = wavesurfer.util.extend(
-            {}, this.wavesurfer.drawer.params, {
-                showRegions: false,
-                showOverview: false,
-                overviewBorderColor: 'green',
-                overviewBorderSize: 2
-            }, params, {
-                scrollParent: false,
-                fillParent: true
-            }
-        );
-
-        this.width = 0;
-        this.height = this.params.height * this.params.pixelRatio;
-
-        this.createWrapper();
-        this.createElements();
-
-        if (WaveSurfer.Regions && this.params.showRegions) {
-            this.regions();
-        }
-
-        this.bindWaveSurferEvents();
-        this.bindMinimapEvents();
-    },
-    regions: function() {
-        var my = this;
-        this.regions = {};
-
-        this.wavesurfer.on('region-created', function(region) {
-            my.regions[region.id] = region;
-            my.renderRegions();
-        });
-
-        this.wavesurfer.on('region-updated', function(region) {
-            my.regions[region.id] = region;
-            my.renderRegions();
-        });
-
-        this.wavesurfer.on('region-removed', function(region) {
-            delete my.regions[region.id];
-            my.renderRegions();
-        });
-    },
-    renderRegions: function() {
-        var my = this;
-        var regionElements = this.wrapper.querySelectorAll('region');
-        for (var i = 0; i < regionElements.length; ++i) {
-          this.wrapper.removeChild(regionElements[i]);
-        }
-
-        Object.keys(this.regions).forEach(function(id){
-            var region = my.regions[id];
-            var width = (my.width * ((region.end - region.start) / my.wavesurfer.getDuration()));
-            var left = (my.width * (region.start / my.wavesurfer.getDuration()));
-            var regionElement = my.style(document.createElement('region'), {
-                height: 'inherit',
-                backgroundColor: region.color,
-                width: width + 'px',
-                left: left + 'px',
-                display: 'block',
-                position: 'absolute'
-            });
-            regionElement.classList.add(id);
-            my.wrapper.appendChild(regionElement);
-        });
-    },
-    createElements: function() {
-        WaveSurfer.Drawer.Canvas.createElements.call(this);
-
-        if (this.params.showOverview) {
-            this.overviewRegion =  this.style(document.createElement('overview'), {
-                height: (this.wrapper.offsetHeight - (this.params.overviewBorderSize * 2)) + 'px',
-                width: '0px',
-                display: 'block',
-                position: 'absolute',
-                cursor: 'move',
-                border: this.params.overviewBorderSize + 'px solid ' + this.params.overviewBorderColor,
-                zIndex: 2,
-                opacity: this.params.overviewOpacity
-            });
-
-            this.wrapper.appendChild(this.overviewRegion);
-        }
-    },
-
-    bindWaveSurferEvents: function () {
-        var my = this;
-        this.wavesurfer.on('ready', this.render.bind(this));
-        this.wavesurfer.on('audioprocess', function (currentTime) {
-            my.progress(my.wavesurfer.backend.getPlayedPercents());
-        });
-        this.wavesurfer.on('seek', function(progress) {
-            my.progress(my.wavesurfer.backend.getPlayedPercents());
-        });
-
-        if (this.params.showOverview) {
-            this.wavesurfer.on('scroll', function(event) {
-                if (!my.draggingOverview) {
-                    my.moveOverviewRegion(event.target.scrollLeft / my.ratio);
-                }
-            });
-
-            this.wavesurfer.drawer.wrapper.addEventListener('mouseover', function(event) {
-                if (my.draggingOverview)  {
-                    my.draggingOverview = false;
-                }
-            });
-        }
-
-        var prevWidth = 0;
-        var onResize = function () {
-            if (prevWidth != my.wrapper.clientWidth) {
-                prevWidth = my.wrapper.clientWidth;
-                my.render();
-                my.progress(my.wavesurfer.backend.getPlayedPercents());
-            }
-        };
-        window.addEventListener('resize', onResize, true);
-
-        this.wavesurfer.on('destroy', function () {
-            my.destroy.bind(this);
-            window.removeEventListener('resize', onResize, true);
-        });
-    },
-
-    bindMinimapEvents: function () {
-        var my = this;
-        var relativePositionX = 0;
-        var seek = true;
-        var positionMouseDown = {
-            clientX: 0,
-            clientY: 0
-        };
-
-        this.on('click', (function (e, position) {
-            if (seek)  {
-                this.progress(position);
-                this.wavesurfer.seekAndCenter(position);
-            } else {
-                seek = true;
-            }
-        }).bind(this));
-
-        if (this.params.showOverview) {
-            this.overviewRegion.addEventListener('mousedown', function(event) {
-                my.draggingOverview = true;
-                relativePositionX = event.layerX;
-                positionMouseDown.clientX = event.clientX;
-                positionMouseDown.clientY = event.clientY;
-            });
-
-            this.wrapper.addEventListener('mousemove', function(event) {
-                if(my.draggingOverview) {
-                    my.moveOverviewRegion(event.clientX - my.container.getBoundingClientRect().left - relativePositionX);
-                }
-            });
-
-            this.wrapper.addEventListener('mouseup', function(event) {
-                if (positionMouseDown.clientX - event.clientX === 0 && positionMouseDown.clientX - event.clientX === 0) {
-                    seek = true;
-                    my.draggingOverview = false;
-                } else if (my.draggingOverview)  {
-                    seek = false;
-                    my.draggingOverview = false;
-                }
-            });
-        }
-    },
-
-    render: function () {
-        var len = this.getWidth();
-        var peaks = this.wavesurfer.backend.getPeaks(len);
-        this.drawPeaks(peaks, len);
-
-        if (this.params.showOverview) {
-            //get proportional width of overview region considering the respective
-            //width of the drawers
-            this.ratio = this.wavesurfer.drawer.width / this.width;
-            this.waveShowedWidth = this.wavesurfer.drawer.width / this.ratio;
-            this.waveWidth = this.wavesurfer.drawer.width;
-            this.overviewWidth = (this.width / this.ratio);
-            this.overviewPosition = 0;
-            this.overviewRegion.style.width = (this.overviewWidth - (this.params.overviewBorderSize * 2)) + 'px';
-        }
-    },
-    moveOverviewRegion: function(pixels) {
-        if (pixels < 0) {
-            this.overviewPosition = 0;
-        } else if (pixels + this.overviewWidth < this.width) {
-            this.overviewPosition = pixels;
-        } else {
-            this.overviewPosition = (this.width - this.overviewWidth);
-        }
-        this.overviewRegion.style.left = this.overviewPosition + 'px';
-        this.wavesurfer.drawer.wrapper.scrollLeft = this.overviewPosition * this.ratio;
-    }
-});
-
-WaveSurfer.initMinimap = function (params) {
-    var map = Object.create(WaveSurfer.Minimap);
-    map.init(this, params);
-    return map;
-};
 
 const clientId = '9dd85b3d536b3da895a951ddac00d6f8';
 
@@ -225,6 +15,7 @@ class Player extends Component {
             playing: false,
             duration: '00:00',
             tempo: 0,
+            tempoInput: 1,
             cues: [],
             loopActive: false,
             loopIn: false,
@@ -232,8 +23,6 @@ class Player extends Component {
             maxVol: 1,
             cueActive: false
         };
-
-        this.wavesurfer = Object.create(WaveSurfer);
 
         this.handleTogglePlay = this.handleTogglePlay.bind(this);
         this.handleStop = this.handleStop.bind(this);
@@ -261,13 +50,18 @@ class Player extends Component {
             waveColor: 'purple',
             progressColor: 'purple',
             cursorColor: 'red',
-            minimap: true,
             hideScrollbar: true,
-            minPxPerSec: 50,
-            pixelRatio: 1
+            showTime: true,
+            plugins: [
+                MinimapPlugin.create({
+                    waveColor: '#555',
+                    progressColor: '#333'
+                })
+            ]
         }
 
-        this.wavesurfer.init(options);
+        this.wavesurfer = new WaveSurfer(options);
+        this.wavesurfer.init();
 
         this.wavesurfer.on('loading', (amount) => {
             this.setState({ loading: amount < 100 ? true : false });
@@ -324,10 +118,12 @@ class Player extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (this.props.track.preview_url !== nextProps.track.preview_url) {
+            // Clear the current track
+            this.wavesurfer.empty()
 
             // TODO: Check if Safari has fixed the 302 redirect, if so just load the track
             Axios.get(`${nextProps.track.preview_url}?client_id=${clientId}&_status_code_map[302]=200`).then((track) => {
-                this.wavesurfer.load(track.data.location);
+                this.wavesurfer.load(track.config.url);
             }).catch((error) => {
                 console.log('error', error);
             });
@@ -335,13 +131,6 @@ class Player extends Component {
             this.setState({
                 playing: false,
                 cues: []
-            });
-
-            this.wavesurfer.initMinimap({
-                height: 30,
-                waveColor: '#555',
-                progressColor: '#222',
-                cursorColor: 'black'
             });
         }
 
@@ -372,12 +161,13 @@ class Player extends Component {
 
     handleHotCue(index) {
         let newCues = this.state.cues;
+        let current = this.wavesurfer.getCurrentTime()
 
         if(newCues[index]) {
             this.setState({ playing: true });
             this.wavesurfer.play(newCues[index]);
         } else {
-            newCues[index] = this.wavesurfer.getCurrentTime();
+            newCues[index] = current
             this.setState({ cues: newCues });
         }
 	}
@@ -388,7 +178,7 @@ class Player extends Component {
 
     handleLoopOut() {
         if(this.state.loopIn && this.wavesurfer.isPlaying()) {
-            this.setState({ loopOut: this.wavesurfer.getCurrentTime().toFixed(2) });
+            this.setState({ loopOut: this.wavesurfer.getCurrentTime() });
             this.playLoop();
         }
 	}
@@ -405,20 +195,21 @@ class Player extends Component {
 
     playLoop() {
         this.setState({ loopActive: true });
-        // this.wavesurfer.seekAndCenter(this.state.loopIn);
         this.wavesurfer.play(this.state.loopIn);
     }
 
     handleTempoChange() {
         let formatTempo = function(val) {
-            if(val < 1) {
-                return '-' + ((1-val)*100).toFixed(1) + '%';
+            let value = Number(val)
+            if (value === 1) {
+                return '0'
+            } else if (value < 1) {
+                return '-' + ((1-value)*100).toFixed(1) + '%';
             } else {
-                val = '.' + val.split('.')[1];
-                return '+' + (val*100).toFixed(1) + '%';
+                return '+' + Math.abs(((1-value)*100)).toFixed(1) + '%';
             }
         };
-        this.setState({ tempo: formatTempo(this.refs.tempo.value) });
+        this.setState({ tempo: formatTempo(this.refs.tempo.value), tempoInput: this.refs.tempo.value });
         this.wavesurfer.setPlaybackRate(this.refs.tempo.value);
 	}
 
@@ -501,9 +292,9 @@ class Player extends Component {
                         <div className="deck">{name}</div>
                     </div>
                     <div className="body">
-                        <div ref="wavesurfer" className={loading}></div>
+                        <div id="wavesurfer" ref="wavesurfer" className={loading}></div>
                         <div className="tempo">
-                            <input type="range" ref="tempo" onChange={this.handleTempoChange} min="0.9" max="1.1" step="0.001" className="slider slider-vertical" />
+                            <input type="range" ref="tempo" onChange={this.handleTempoChange} min="0.9" max="1.1" step="0.001" className="slider slider-vertical" value={this.state.tempoInput} />
                             <div className="bend">
                                 <button onMouseDown={() => this.handleTempoBend('up')} onMouseUp={this.handleTempoBendStop}>+</button>
                                 <button onMouseDown={() => this.handleTempoBend('down')} onMouseUp={this.handleTempoBendStop}>-</button>

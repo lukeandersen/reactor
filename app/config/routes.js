@@ -1,14 +1,23 @@
 import React from 'react';
-import {ReactRouter, Router, Route, IndexRoute, hashHistory} from 'react-router';
-import Main from '../components/main';
+import { HashRouter } from 'react-router-dom';
+import { createBrowserHistory } from 'history';
+import ReactGA from 'react-ga';
 import Home from '../components/home';
+import 'normalize.css';
+import '../styles/main.css';
 
-var routes = (
-	<Router history={hashHistory}>
-		<Route path='/' component={Main}>
-			<IndexRoute component={Home}></IndexRoute>
-		</Route>
-	</Router>
+ReactGA.initialize('UA-00000000-0')
+
+const history = createBrowserHistory()
+history.listen((location) => {
+    ReactGA.set({ page: location.pathname })
+    ReactGA.pageview(location.pathname)
+})
+
+const Routes = (
+	<HashRouter>
+		<Home />
+	</HashRouter>
 );
 
-module.exports = routes;
+export default Routes

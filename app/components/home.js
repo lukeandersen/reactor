@@ -1,6 +1,4 @@
 import React, {Component} from 'react';
-import Normalize from 'normalize.css';
-import Styles from '../styles/main.css';
 import Api from '../helpers/api';
 import Library from '../components/library';
 import Player from '../components/player';
@@ -65,28 +63,28 @@ class Home extends Component {
 	}
 
 	render() {
-		let {deckA, deckB, tracks, loading, ac} = this.state;
+		let {deckA, deckB, tracks, loading, xfade} = this.state;
 		let	loadingText;
 		loading ? loadingText = 'Loading...' : loadingText = null;
 
 		return (
 			<div>
 				<div className="decks">
-					<Player name="A" track={deckA} xfade={this.state.xfade} />
-					<Player name="B" track={deckB} xfade={this.state.xfade} />
+					<Player name="A" track={deckA} xfade={xfade} />
+					<Player name="B" track={deckB} xfade={xfade} />
 				</div>
 				<div className="fader">
 					<div className="item">
 						<form className="search" onSubmit={this.handleSearch}>
 							<input ref="search" type="search" placeholder="Seach"/>
-							<button type="submit">go</button>
+							<button type="submit">Go</button>
 							<div className="searchStatus">{loadingText}</div>
 						</form>
 					</div>
 					<div className="item">
 						<div className="xfader">
 							<span>A</span>
-							<input className="slider" type="range" onChange={this.handleCrossfader} ref="xfader" min="-1" max="1" step="0.01"/>
+							<input className="slider" type="range" onChange={this.handleCrossfader} ref="xfader" min="-1" max="1" step="0.01" value={xfade} />
 							<span>B</span>
       					</div>
 					</div>
@@ -94,7 +92,7 @@ class Home extends Component {
 						<img src={LogoImg} className="soundcloud" alt="soundcloud"/>
 					</div>
 				</div>
-				<Library tracks={this.state.tracks} selectTrack={this.handleSelectTrack} />
+				<Library tracks={tracks} selectTrack={this.handleSelectTrack} />
 			</div>
 		)
 	}
