@@ -5,6 +5,8 @@ import Classnames from 'classnames';
 import Axios from 'axios';
 
 const clientId = '9dd85b3d536b3da895a951ddac00d6f8';
+const delayAdjust = 0.175
+let fired = false
 
 class Player extends Component {
     constructor(props) {
@@ -13,7 +15,7 @@ class Player extends Component {
         this.state = {
             loading: false,
             playing: false,
-            duration: '00:00',
+            duration: '00:00:00',
             tempo: 0,
             tempoInput: 1,
             cues: [],
@@ -41,6 +43,60 @@ class Player extends Component {
         this.calculateGain = this.calculateGain.bind(this);
 
         this.cueTrack = this.cueTrack.bind(this);
+
+        this.onKeyPressed = this.onKeyPressed.bind(this);
+        this.onKeyUp = this.onKeyUp.bind(this);
+    }
+
+    onKeyPressed(event) {
+		if (event.key === "1") {
+            this.handleHotCue(0)
+        }
+        if (event.key === "2") {
+            this.handleHotCue(1)
+        }
+        if (event.key === "3") {
+            this.handleHotCue(2)
+        }
+        if (event.key === "4") {
+            this.handleHotCue(3)
+        }
+        if (event.key === "i") {
+            this.handleLoopIn()
+        }
+        if (event.key === "o") {
+            this.handleLoopOut()
+        }
+        if (event.key === "p") {
+            this.handleLoopExit()
+        }
+        if (event.keyCode == 32) {
+            this.handleTogglePlay()
+        }
+        if (event.key === "+") {
+            if (!fired) {
+                fired = true
+                this.handleTempoBend('up')
+            }
+        }
+        if (event.key === "_") {
+            if (!fired) {
+                fired = true
+                this.handleTempoBend('down')
+            }
+        }
+
+    }
+
+    onKeyUp(event) {
+        if (event.key === "+") {
+            fired = false
+            this.handleTempoBendStop()
+        }
+        if (event.key === "_") {
+            fired = false
+            this.handleTempoBendStop()
+        }
     }
 
 	componentDidMount() {
@@ -52,6 +108,7 @@ class Player extends Component {
             cursorColor: 'red',
             hideScrollbar: true,
             showTime: true,
+            pixelRatio: 1,
             plugins: [
                 MinimapPlugin.create({
                     waveColor: '#555',
@@ -113,7 +170,7 @@ class Player extends Component {
         // if (hours < 10) { hours = '0' + hours; }
         if (minutes < 10) { minutes = '0' + minutes; }
         if (seconds < 10) { seconds = '0' + seconds; }
-        return minutes + ':' + seconds;
+        return minutes + ':' + seconds + ':' + (t % 1).toFixed(2).substring(2);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -161,7 +218,7 @@ class Player extends Component {
 
     handleHotCue(index) {
         let newCues = this.state.cues;
-        let current = this.wavesurfer.getCurrentTime()
+        let current = this.wavesurfer.getCurrentTime() - delayAdjust
 
         if(newCues[index]) {
             this.setState({ playing: true });
@@ -173,12 +230,12 @@ class Player extends Component {
 	}
 
     handleLoopIn() {
-        this.setState({ loopIn: this.wavesurfer.getCurrentTime() });
+        this.setState({ loopIn: this.wavesurfer.getCurrentTime() - delayAdjust });
 	}
 
     handleLoopOut() {
         if(this.state.loopIn && this.wavesurfer.isPlaying()) {
-            this.setState({ loopOut: this.wavesurfer.getCurrentTime() });
+            this.setState({ loopOut: this.wavesurfer.getCurrentTime() -delayAdjust });
             this.playLoop();
         }
 	}
@@ -272,7 +329,7 @@ class Player extends Component {
 
         return (
             <div className="player-with-controls">
-                <div className="player">
+                <div className="player" onKeyDown={(e) => this.onKeyPressed(e)} onKeyUp={(e) => this.onKeyUp(e)} tabIndex="0">
                     <div className="header">
                         <div className="album" style={albumImg}></div>
                         <div className="header-body">
