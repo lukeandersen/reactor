@@ -39,7 +39,7 @@
     "postcss-load-config": "2.1.0",
     "postcss-loader": "3.0.0",
     "postcss-nesting": "7.0.1",
-    "react-hot-loader": "4.12.21",
+    "react-hot-loader": "4.13.0",
     "style-loader": "1.2.1",
     "url-loader": "4.1.0",
     "webpack": "4.44.1",
