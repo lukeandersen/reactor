@@ -20,7 +20,7 @@
     "react-ga": "3.3.0",
     "react-icons": "^4.0.0",
     "react-router-dom": "5.2.0",
-    "wavesurfer.js": "^4.0.1"
+    "wavesurfer.js": "^5.0.0"
   },
   "devDependencies": {
     "@babel/core": "7.14.6",
