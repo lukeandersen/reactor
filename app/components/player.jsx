@@ -341,7 +341,7 @@ class Player extends Component {
                                     </tr>
                                     <tr>
                                         <td className="muted">{track.artist}</td>
-                                        <td className="muted" className="text-right">{tempo}</td>
+									<td className="muted text-right">{tempo}</td>
                                     </tr>
                                 </tbody>
                             </table>
