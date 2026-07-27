@@ -22,7 +22,7 @@
     "postcss": "8.5.18",
     "postcss-cssnext": "3.1.1",
     "postcss-import": "16.1.1",
-    "postcss-nesting": "7.0.1"
+    "postcss-nesting": "14.0.1"
   },
   "postcss": {
     "plugins": {
