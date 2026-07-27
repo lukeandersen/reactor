@@ -3,10 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "dev": "vite --port 9000",
-    "start": "vite --port 9000",
-    "build": "vite build",
-    "preview": "vite preview"
+    "dev": "next dev -p 9000",
+    "build": "next build",
+    "start": "next start -p 9000"
   },
   "author": "",
   "license": "ISC",
@@ -14,21 +13,16 @@
     "axios": "^0.27.0",
     "classnames": "^2.2.6",
     "normalize.css": "^8.0.1",
-    "react": "^17.0.0",
-    "react-dnd": "^14.0.0",
-    "react-dnd-html5-backend": "^14.0.0",
-    "react-dom": "^17.0.0",
-    "react-ga": "3.3.1",
-    "react-icons": "^4.0.0",
-    "react-router-dom": "6.3.0",
+    "next": "15.5.21",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "wavesurfer.js": "^5.0.0"
   },
   "devDependencies": {
     "postcss": "8.4.31",
     "postcss-cssnext": "3.1.1",
     "postcss-import": "12.0.1",
-    "postcss-nesting": "7.0.1",
-    "vite": "6.1.0"
+    "postcss-nesting": "7.0.1"
   },
   "postcss": {
     "plugins": {

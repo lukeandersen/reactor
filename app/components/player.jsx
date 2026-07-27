@@ -1,10 +1,7 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
 import WaveSurfer from 'wavesurfer.js';
 import MinimapPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.minimap.min.js';
 import Classnames from 'classnames';
-import Axios from 'axios';
-
-const clientId = '9dd85b3d536b3da895a951ddac00d6f8';
 const delayAdjust = 0.175
 let fired = false
 
@@ -46,6 +43,9 @@ class Player extends Component {
 
         this.onKeyPressed = this.onKeyPressed.bind(this);
         this.onKeyUp = this.onKeyUp.bind(this);
+        this.waveSurferRef = React.createRef();
+        this.tempoRef = React.createRef();
+        this.volumeRef = React.createRef();
     }
 
     onKeyPressed(event) {
@@ -102,7 +102,7 @@ class Player extends Component {
 	componentDidMount() {
         let options = {
             audioContext: this.props.ac,
-            container: this.refs.wavesurfer,
+            container: this.waveSurferRef.current,
             waveColor: 'purple',
             progressColor: 'purple',
             cursorColor: 'red',
@@ -178,12 +178,7 @@ class Player extends Component {
             // Clear the current track
             this.wavesurfer.empty()
 
-            // TODO: Check if Safari has fixed the 302 redirect, if so just load the track
-            Axios.get(`${nextProps.track.preview_url}?client_id=${clientId}&_status_code_map[302]=200`).then((track) => {
-                this.wavesurfer.load(track.config.url);
-            }).catch((error) => {
-                console.log('error', error);
-            });
+            this.wavesurfer.load(nextProps.track.preview_url);
 
             this.setState({
                 playing: false,
@@ -203,7 +198,7 @@ class Player extends Component {
 
 	handleTogglePlay() {
         this.setState({ playing: this.state.playing === false ? true : false });
-        this.wavesurfer.setVolume(this.refs.volume.value);
+        this.wavesurfer.setVolume(this.volumeRef.current.value);
         this.wavesurfer.playPause();
 	}
 
@@ -266,14 +261,14 @@ class Player extends Component {
                 return '+' + Math.abs(((1-value)*100)).toFixed(1) + '%';
             }
         };
-        this.setState({ tempo: formatTempo(this.refs.tempo.value), tempoInput: this.refs.tempo.value });
-        this.wavesurfer.setPlaybackRate(this.refs.tempo.value);
+        this.setState({ tempo: formatTempo(this.tempoRef.current.value), tempoInput: this.tempoRef.current.value });
+        this.wavesurfer.setPlaybackRate(this.tempoRef.current.value);
 	}
 
     handleTempoBend(e) {
         let max = 1.1,
             min = 0.9,
-            currentTempo = this.refs.tempo.value;
+            currentTempo = this.tempoRef.current.value;
 
         if(e == 'up') {
             this.bend = setInterval(() => {
@@ -290,11 +285,11 @@ class Player extends Component {
 
     handleTempoBendStop() {
         clearInterval(this.bend);
-        this.wavesurfer.setPlaybackRate(this.refs.tempo.value);
+        this.wavesurfer.setPlaybackRate(this.tempoRef.current.value);
 	}
 
     handleVolumeChange() {
-        let newPlayerVol = Math.abs(this.refs.volume.value * this.state.maxVol);
+        let newPlayerVol = Math.abs(this.volumeRef.current.value * this.state.maxVol);
         this.wavesurfer.setVolume(newPlayerVol);
 	}
 
@@ -303,7 +298,7 @@ class Player extends Component {
             always make sure its a positive value, then
             return new volume value. 75% of 0.5 = 0.375 */
 
-        let currentVol = this.refs.volume.value,
+        let currentVol = this.volumeRef.current.value,
             move = 1 - Math.abs(faderVal),
             newVol = move * currentVol;
 
@@ -349,9 +344,9 @@ class Player extends Component {
                         <div className="deck">{name}</div>
                     </div>
                     <div className="body">
-                        <div id="wavesurfer" ref="wavesurfer" className={loading}></div>
+                        <div id="wavesurfer" ref={this.waveSurferRef} className={loading}></div>
                         <div className="tempo">
-                            <input type="range" ref="tempo" onChange={this.handleTempoChange} min="0.9" max="1.1" step="0.001" className="slider slider-vertical" value={this.state.tempoInput} />
+                            <input type="range" ref={this.tempoRef} onChange={this.handleTempoChange} min="0.9" max="1.1" step="0.001" className="slider slider-vertical" value={this.state.tempoInput} />
                             <div className="bend">
                                 <button onMouseDown={() => this.handleTempoBend('up')} onMouseUp={this.handleTempoBendStop}>+</button>
                                 <button onMouseDown={() => this.handleTempoBend('down')} onMouseUp={this.handleTempoBendStop}>-</button>
@@ -382,7 +377,7 @@ class Player extends Component {
                 </div>
                 <div className="mixer">
                     <button className={cueAudio} onClick={this.cueTrack}>Cue</button>
-                    <input ref="volume" onChange={this.handleVolumeChange} className="slider slider-vertical" type="range" min="0" max="1" step="0.01"/>
+                    <input ref={this.volumeRef} onChange={this.handleVolumeChange} className="slider slider-vertical" type="range" min="0" max="1" step="0.01"/>
                 </div>
             </div>
     	);

@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import Api from '../helpers/api';
 import Library from '../components/library';
 import Player from '../components/player';
-import LogoImg from '../assets/soundcloud-logo-1.png';
 
 class Home extends Component {
 	constructor(props) {
@@ -19,6 +18,8 @@ class Home extends Component {
 		this.handleSearch = this.handleSearch.bind(this);
 		this.handleSelectTrack = this.handleSelectTrack.bind(this);
 		this.handleCrossfader = this.handleCrossfader.bind(this);
+		this.searchRef = React.createRef();
+		this.xfaderRef = React.createRef();
 	}
 
 	getTracks(search, tag) {
@@ -33,8 +34,8 @@ class Home extends Component {
 
 	handleSearch(e) {
 		e.preventDefault();
-		if(this.refs.search.value !== null) {
-			this.getTracks(this.refs.search.value);
+		if(this.searchRef.current?.value !== null) {
+			this.getTracks(this.searchRef.current.value);
 		}
 	}
 
@@ -59,7 +60,7 @@ class Home extends Component {
 	}
 
 	handleCrossfader() {
-		this.setState({ xfade: parseFloat(this.refs.xfader.value) });
+		this.setState({ xfade: parseFloat(this.xfaderRef.current.value) });
 	}
 
 	render() {
@@ -76,7 +77,7 @@ class Home extends Component {
 				<div className="fader">
 					<div className="item">
 						<form className="search" onSubmit={this.handleSearch}>
-							<input ref="search" type="search" placeholder="Seach"/>
+							<input ref={this.searchRef} type="search" placeholder="Seach"/>
 							<button type="submit">Go</button>
 							<div className="searchStatus">{loadingText}</div>
 						</form>
@@ -84,12 +85,12 @@ class Home extends Component {
 					<div className="item">
 						<div className="xfader">
 							<span>A</span>
-							<input className="slider" type="range" onChange={this.handleCrossfader} ref="xfader" min="-1" max="1" step="0.01" value={xfade} />
+							<input className="slider" type="range" onChange={this.handleCrossfader} ref={this.xfaderRef} min="-1" max="1" step="0.01" value={xfade} />
 							<span>B</span>
       					</div>
 					</div>
 					<div className="item">
-						<img src={LogoImg} className="soundcloud" alt="soundcloud"/>
+							<img src="/soundcloud-logo-1.png" className="soundcloud" alt="SoundCloud"/>
 					</div>
 				</div>
 				<Library tracks={tracks} selectTrack={this.handleSelectTrack} />
