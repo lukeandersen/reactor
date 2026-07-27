@@ -7,10 +7,10 @@ export default function IndexPage() {
 	return (
 		<>
 			<Head>
-				<title>Reactor - Web based DJ software using Soundcloud</title>
-				<meta name="description" content="DJ in your browser using Soundcloud. No software to download or music to pay for, just click and play." />
+				<title>Reactor - Web based DJ software using Audius</title>
+				<meta name="description" content="DJ in your browser using music from Audius. No software to download: search, select and mix tracks." />
 				<meta property="og:image" content="/thumbnail.jpg" />
-				<meta property="og:title" content="Reactor - Web based DJ software using Soundcloud" />
+				<meta property="og:title" content="Reactor - Web based DJ software using Audius" />
 				<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 				<link rel="icon" href="/favicon.ico" />
 			</Head>

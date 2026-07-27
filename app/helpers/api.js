@@ -1,9 +1,9 @@
 import Axios from 'axios';
 
 const Api = {
-	getTracks: (query, tag) => {
+	getTracks: (query) => {
 		return Axios.get('/api/tracks', {
-			params: tag ? { tag } : { q: query }
+			params: query ? { q: query } : {}
 		});
 	}
 };

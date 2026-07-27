@@ -1,33 +1,39 @@
 import Axios from 'axios';
-import { getSoundCloudAccessToken, soundCloudHeaders } from '../../lib/soundcloud';
+const AUDIUS_API_URL = 'https://api.audius.co/v1';
+
+function toLibraryTrack(track) {
+	return {
+		id: track.id,
+		title: track.title,
+		artwork_url: track.artwork?.['480x480'] || track.artwork?.['150x150'] || null,
+		user: {
+			username: track.user?.name || track.user?.handle || 'Unknown artist'
+		},
+		genre: track.genre || '',
+		duration: track.duration * 1000,
+		stream_url: track.stream.url
+	};
+}
 
 export default async function handler(req, res) {
 	try {
-		const accessToken = await getSoundCloudAccessToken();
-		const params = {
-			limit: 100,
-			access: 'playable',
-			'duration[to]': 500000,
-			linked_partitioning: true
-		};
+		const query = typeof req.query.q === 'string' ? req.query.q.trim() : '';
+		const response = await Axios.get(
+			query ? `${AUDIUS_API_URL}/tracks/search` : `${AUDIUS_API_URL}/tracks/trending`,
+			{
+				params: query ? { query, limit: 100 } : { limit: 100 },
+				timeout: 10_000
+			}
+		);
+		const tracks = Array.isArray(response.data.data) ? response.data.data : [];
 
-		if (typeof req.query.tag === 'string') params.tags = req.query.tag;
-		if (typeof req.query.q === 'string') params.q = req.query.q;
-
-		const response = await Axios.get('https://api.soundcloud.com/tracks', {
-			headers: soundCloudHeaders(accessToken),
-			params
-		});
-		const tracks = response.data.collection || response.data;
-
-		res.status(200).json(tracks.map((track) => ({
-			...track,
-			stream_url: track.stream_url
-				? `/api/stream?url=${encodeURIComponent(track.stream_url)}`
-				: null
-		})));
+		res.status(200).json(
+			tracks
+				.filter((track) => track.is_streamable && track.stream?.url)
+				.map(toLibraryTrack)
+		);
 	} catch (error) {
-		console.error('Unable to search SoundCloud tracks.', error.response?.data || error.message);
-		res.status(error.response?.status || 500).json({ error: 'Unable to load SoundCloud tracks.' });
+		console.error('Unable to search Audius tracks.', error.response?.data || error.message);
+		res.status(error.response?.status || 502).json({ error: 'Unable to load Audius tracks.' });
 	}
 }

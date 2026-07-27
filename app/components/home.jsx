@@ -9,6 +9,7 @@ class Home extends Component {
 
 		this.state = {
 			loading: false,
+			error: null,
 			tracks: [],
 			deckA: {},
 			deckB: {},
@@ -23,27 +24,35 @@ class Home extends Component {
 	}
 
 	getTracks(search, tag) {
-		this.setState({ loading: true });
+		this.setState({ loading: true, error: null });
 		return Api.getTracks(search, tag).then((response) => {
 			this.setState({
 				tracks: response.data,
 				loading: false
 			});
+			return response.data;
+		}).catch((error) => {
+			this.setState({
+				loading: false,
+				error: error.response?.data?.error || 'Unable to load Audius tracks.'
+			});
+			return [];
 		});
 	}
 
 	handleSearch(e) {
 		e.preventDefault();
-		if(this.searchRef.current?.value !== null) {
+		if(this.searchRef.current?.value) {
 			this.getTracks(this.searchRef.current.value);
 		}
 	}
 
 	componentDidMount() {
-		this.getTracks(null, 'dance').then(() => {
-			// Load first two tracks
-			this.handleSelectTrack(0, 'A');
-			this.handleSelectTrack(1, 'B');
+		this.getTracks().then((tracks) => {
+			if (tracks.length >= 2) {
+				this.handleSelectTrack(0, 'A');
+				this.handleSelectTrack(1, 'B');
+			}
 		});
 	}
 
@@ -64,9 +73,9 @@ class Home extends Component {
 	}
 
 	render() {
-		let {deckA, deckB, tracks, loading, xfade} = this.state;
+		let {deckA, deckB, tracks, loading, error, xfade} = this.state;
 		let	loadingText;
-		loading ? loadingText = 'Loading...' : loadingText = null;
+		loadingText = loading ? 'Loading...' : error;
 
 		return (
 			<div>
@@ -90,7 +99,7 @@ class Home extends Component {
       					</div>
 					</div>
 					<div className="item">
-							<img src="/soundcloud-logo-1.png" className="soundcloud" alt="SoundCloud"/>
+							<span className="service-brand">Audius</span>
 					</div>
 				</div>
 				<Library tracks={tracks} selectTrack={this.handleSelectTrack} />

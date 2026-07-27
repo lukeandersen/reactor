@@ -403,9 +403,10 @@ input[type='range'] {
 	}
 }
 
-.soundcloud {
+.service-brand {
 	float: right;
 	margin-top: -5px;
+	color: white;
 }
 
 
