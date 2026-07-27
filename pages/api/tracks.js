@@ -26,7 +26,7 @@ export default async function handler(req, res) {
 
         res.status(200).json(tracks.filter((track) => track.is_streamable && track.stream?.url).map(toLibraryTrack))
     } catch (error) {
-        console.error('Unable to search Audius tracks 😩', error.response?.data || error.message)
+        console.error('Unable to search Audius tracks. 😩', error.response?.data || error.message)
         res.status(error.response?.status || 502).json({ error: 'Unable to load Audius tracks.' })
     }
 }
