@@ -13,7 +13,7 @@
     "axios": "^0.33.0",
     "classnames": "^2.2.6",
     "normalize.css": "^8.0.1",
-    "next": "15.5.21",
+    "next": "15.5.22",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "wavesurfer.js": "^5.0.0"
