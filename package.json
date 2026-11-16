@@ -19,7 +19,7 @@
     "wavesurfer.js": "^5.0.0"
   },
   "devDependencies": {
-    "postcss": "8.5.31",
+    "postcss": "8.5.33",
     "postcss-cssnext": "3.1.1",
     "postcss-import": "17.0.1",
     "postcss-nesting": "14.0.3"
